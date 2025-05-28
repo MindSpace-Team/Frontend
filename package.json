@@ -11,13 +11,11 @@
   "dependencies": {
     "@react-spring/web": "^10.0.1",
     "@use-gesture/react": "^10.3.1",
-    "konva": "^9.3.20",
     "next": "15.3.2",
     "react": "^19.0.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^19.0.0",
-    "react-konva": "^19.0.4",
     "zustand": "^5.0.5"
   },
   "devDependencies": {
