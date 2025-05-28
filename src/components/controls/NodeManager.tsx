@@ -1,9 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import Canvas from "@/components/canvas/Canvas";
-import useMindGraph from "@/components/controls/useMindGraph";
 import Nodes from "@/components/nodes/nodes";
 import ContextMenu from "@/components/common/ContextMenu";
+import { useMindGraphStore } from "@/store/mindGraphStore";
 
 type Mode =
   | null
@@ -16,7 +16,12 @@ type MenuState =
   | { x: number; y: number; target: "canvas"; svgX: number; svgY: number };
 
 export default function NodeManager() {
-  const { graph, addStar, addPlanet, addSatellite, removeNode } = useMindGraph();
+  const nodes = useMindGraphStore(s => s.nodes);
+  const addStar = useMindGraphStore(s => s.addStar);
+  const addPlanet = useMindGraphStore(s => s.addPlanet);
+  const addSatellite = useMindGraphStore(s => s.addSatellite);
+  const removeNode = useMindGraphStore(s => s.removeNode);
+
   const [menu, setMenu] = useState<MenuState>(null);
   const [mode, setMode] = useState<Mode>(null);
 
@@ -51,7 +56,6 @@ export default function NodeManager() {
     }
   }
 
-  // 모드별로 부모노드 선택
   function handleNodeClick(nodeId: number) {
     if (!mode) return;
     if (mode.type === "addPlanet") {
@@ -67,16 +71,18 @@ export default function NodeManager() {
   }
 
   return (
-    <Canvas onCanvasContextMenu={handleCanvasContextMenu}>
-      <svg
-        width="100vw"
-        height="100vh"
-        viewBox="0 0 1920 1080"
-        style={{ width: "100vw", height: "100vh", background: "#111926" }}
-        onClick={() => menu && setMenu(null)}
-      >
-        <Nodes nodes={graph.nodes} onNodeClick={handleNodeClick} />
-      </svg>
+    <>
+      <Canvas onCanvasContextMenu={handleCanvasContextMenu}>
+        <svg
+          width="100vw"
+          height="100vh"
+          viewBox="0 0 1920 1080"
+          style={{ width: "100vw", height: "100vh", background: "#111926" }}
+          onClick={() => menu && setMenu(null)}
+        >
+          <Nodes nodes={nodes} onNodeClick={handleNodeClick} />
+        </svg>
+      </Canvas>
       {menu && (
         <ContextMenu
           x={menu.x}
@@ -86,7 +92,7 @@ export default function NodeManager() {
             { label: "행성 추가", onClick: () => handleMenuOption("행성 추가") },
             { label: "위성 추가", onClick: () => handleMenuOption("위성 추가") },
             { label: "삭제", onClick: () => handleMenuOption("삭제") },
-            { label: "취소", onClick: () => setMenu(null) }
+            { label: "취소", onClick: () => setMenu(null) },
           ]}
           onClose={() => setMenu(null)}
         />
@@ -115,6 +121,6 @@ export default function NodeManager() {
           삭제할 노드를 클릭하세요
         </div>
       )}
-    </Canvas>
+    </>
   );
 }

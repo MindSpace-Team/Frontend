@@ -4,10 +4,10 @@ import React, { useRef, useState, useEffect } from "react";
 const INIT_W = 1920;
 const INIT_H = 1080;
 const MIN_SCALE = 0.5;
-const MAX_SCALE = 2.5;
+const MAX_SCALE = 10;
 
 type CanvasProps = {
-  children: React.ReactNode;
+  children: React.ReactElement<React.SVGProps<SVGSVGElement>>;
   onCanvasContextMenu?: (e: React.MouseEvent<SVGSVGElement>) => void;
 };
 
@@ -41,7 +41,7 @@ export default function Canvas({ children, onCanvasContextMenu }: CanvasProps) {
     const svg = svgRef.current;
     if (!svg) return;
     const handleWheel = (e: WheelEvent) => {
-      if (!e.shiftKey) return; // Shift+휠만 동작
+      if (!e.shiftKey) return;
       e.preventDefault();
 
       const svgRect = svg.getBoundingClientRect();
@@ -114,22 +114,18 @@ export default function Canvas({ children, onCanvasContextMenu }: CanvasProps) {
         zIndex: 0,
       }}
     >
-      {React.Children.map(children, child =>
-        React.isValidElement(child)
-          ? React.cloneElement(child, {
-              ref: svgRef,
-              width: size.width,
-              height: size.height,
-              viewBox: `${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`,
-              onMouseDown,
-              onMouseMove,
-              onMouseUp,
-              onMouseLeave: onMouseUp,
-              onContextMenu: onCanvasContextMenu,
-              tabIndex: 0,
-            })
-          : child
-      )}
+      {React.cloneElement(children, {
+        ref: svgRef,
+        width: size.width,
+        height: size.height,
+        viewBox: `${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`,
+        onMouseDown,
+        onMouseMove,
+        onMouseUp,
+        onMouseLeave: onMouseUp,
+        onContextMenu: onCanvasContextMenu,
+        tabIndex: 0,
+      })}
       <span
         style={{
           color: "#fff",
