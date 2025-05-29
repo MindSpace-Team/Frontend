@@ -35,8 +35,8 @@ export default function useMindGraph() {
       const parent = prev.nodes[parentId];
       if (!parent || parent.type !== "star") return prev;
       const existingPlanets = parent.children.length;
-      const base = 80;
-      const step = 60;
+      const base = 120;
+      const step = 100;
       const distance = base + step * existingPlanets; // 점점 멀어짐
       const angle = Math.random() * Math.PI * 2;
       const x = parent.x + distance * Math.cos(angle);
@@ -57,8 +57,8 @@ export default function useMindGraph() {
       const parent = prev.nodes[parentId];
       if (!parent || parent.type !== "planet") return prev;
       const existingSatellites = parent.children.length;
-      const base = 32;
-      const step = 24;
+      const base = 60;
+      const step = 40;
       const distance = base + step * existingSatellites;
       const angle = Math.random() * Math.PI * 2;
       const x = parent.x + distance * Math.cos(angle);

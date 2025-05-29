@@ -6,8 +6,9 @@ export type NodeId = number;
 export interface MindNode {
   id: NodeId;
   type: NodeType;
-  x: number;
-  y: number;
+  // x, y는 star에만 저장 (planet/satellite는 렌더링에서 계산)
+  x?: number;
+  y?: number;
   radius: number;
   parentId?: NodeId;
   children: NodeId[];
@@ -40,7 +41,7 @@ export const useMindGraphStore = create<MindGraphState>((set) => ({
             type: "star",
             x,
             y,
-            radius: 32,
+            radius: 64,
             children: [],
           },
         },
@@ -51,15 +52,12 @@ export const useMindGraphStore = create<MindGraphState>((set) => ({
     set(state => {
       const parent = state.nodes[parentId];
       if (!parent || parent.type !== "star") return state;
-      const distance = 120 + parent.children.length * 60;
       const id = newId();
       const planet: MindNode = {
         id,
         type: "planet",
         parentId,
-        radius: 18,
-        x: parent.x + distance,
-        y: parent.y,
+        radius: 24,
         children: [],
       };
       return {
@@ -78,15 +76,12 @@ export const useMindGraphStore = create<MindGraphState>((set) => ({
     set(state => {
       const parent = state.nodes[parentId];
       if (!parent || parent.type !== "planet") return state;
-      const distance = 36 + parent.children.length * 30;
       const id = newId();
       const satellite: MindNode = {
         id,
         type: "satellite",
         parentId,
-        radius: 10,
-        x: parent.x + distance,
-        y: parent.y,
+        radius: 12,
         children: [],
       };
       return {
