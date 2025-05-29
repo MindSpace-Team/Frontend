@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect } from "react";
 
 const INIT_W = 1920;
 const INIT_H = 1080;
-const MIN_SCALE = 0.5;
+const MIN_SCALE = 0.01;
 const MAX_SCALE = 10;
 
 type CanvasProps = {
