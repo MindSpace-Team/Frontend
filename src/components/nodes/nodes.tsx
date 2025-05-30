@@ -13,6 +13,12 @@ export default function Nodes({ nodes, onNodeClick }: NodesProps) {
       n.type === "star" && typeof n.x === "number" && typeof n.y === "number"
   );
 
+  // 속도 공식, 멀어질수록 더 느려짐
+  const planetBaseSpeed = 0.3;
+  const planetDecay = 0.8;
+  const satBaseSpeed = 0.7;
+  const satDecay = 0.75;
+
   return (
     <>
       {stars.map(star => (
@@ -32,7 +38,8 @@ export default function Nodes({ nodes, onNodeClick }: NodesProps) {
             const base = 140;
             const step = 90;
             const radius = base + step * planetIdx;
-            const speed = 0.3 + 0.02 * planetIdx;
+            // ★ 지수적 감소 적용
+            const speed = planetBaseSpeed * Math.pow(planetDecay, planetIdx);
             return (
               <OrbitNode
                 key={planet.id}
@@ -51,7 +58,8 @@ export default function Nodes({ nodes, onNodeClick }: NodesProps) {
                     const baseS = 64;
                     const stepS = 48;
                     const satRadius = baseS + stepS * satIdx;
-                    const satSpeed = 0.7 + 0.05 * satIdx;
+                    // ★ 지수적 감소 적용
+                    const satSpeed = satBaseSpeed * Math.pow(satDecay, satIdx);
                     return (
                       <OrbitNode
                         key={satId}
