@@ -1,19 +1,34 @@
 import React from "react";
-import { MindNode, NodeId } from "@/store/mindGraphStore";
+import { MindNode } from "@/store/mindGraphStore";
 import OrbitNode from "@/components/controls/Orbit";
+import { usePopupStore } from "@/store/popupStore";
 
 type NodesProps = {
   nodes: { [id: number]: MindNode };
-  onNodeClick: (nodeId: NodeId) => void;
 };
 
-export default function Nodes({ nodes, onNodeClick }: NodesProps) {
+function findRootId(id: number, nodes: { [id: number]: MindNode }): number {
+  let cur = nodes[id];
+  while (cur && cur.parentId !== undefined && cur.parentId !== null) {
+    cur = nodes[cur.parentId];
+  }
+  return cur ? cur.id : id;
+}
+
+export default function Nodes({ nodes }: NodesProps) {
+  const setPopup = usePopupStore(s => s.setPopup);
+  const pausedRootIds = usePopupStore(s => s.pausedRootIds);
+
+  function isPaused(nodeId: number): boolean {
+    const rootId = findRootId(nodeId, nodes);
+    return pausedRootIds.has(rootId);
+  }
+
   const stars = Object.values(nodes).filter(
     (n): n is MindNode & { x: number; y: number } =>
       n.type === "star" && typeof n.x === "number" && typeof n.y === "number"
   );
 
-  // 속도 공식, 멀어질수록 더 느려짐
   const planetBaseSpeed = 0.3;
   const planetDecay = 0.8;
   const satBaseSpeed = 0.7;
@@ -30,7 +45,11 @@ export default function Nodes({ nodes, onNodeClick }: NodesProps) {
             fill="#ffd700"
             stroke="#fff"
             strokeWidth={3}
-            onClick={() => onNodeClick(star.id)}
+            onContextMenu={e => {
+              e.preventDefault();
+              e.stopPropagation();
+              setPopup({ id: star.id, x: star.x, y: star.y });
+            }}
             style={{ cursor: "pointer" }}
           />
           {star.children.map((planetId, planetIdx) => {
@@ -38,7 +57,6 @@ export default function Nodes({ nodes, onNodeClick }: NodesProps) {
             const base = 400;
             const step = 200;
             const radius = base + step * planetIdx;
-            // ★ 지수적 감소 적용
             const speed = planetBaseSpeed * Math.pow(planetDecay, planetIdx);
             return (
               <OrbitNode
@@ -49,8 +67,13 @@ export default function Nodes({ nodes, onNodeClick }: NodesProps) {
                 speed={speed}
                 size={planet.radius}
                 color="#3af"
-                initialAngle={planet.initialAngle ?? (Math.random() * Math.PI * 2)}
-                onClick={() => onNodeClick(planet.id)}
+                initialAngle={planet.initialAngle ?? Math.random() * Math.PI * 2}
+                paused={isPaused(planet.id)}
+                onContextMenu={(planetX, planetY, e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setPopup({ id: planet.id, x: planetX, y: planetY });
+                }}
               >
                 {(planetX, planetY) =>
                   planet.children.map((satId, satIdx) => {
@@ -58,7 +81,6 @@ export default function Nodes({ nodes, onNodeClick }: NodesProps) {
                     const baseS = 80;
                     const stepS = 40;
                     const satRadius = baseS + stepS * satIdx;
-                    // ★ 지수적 감소 적용
                     const satSpeed = satBaseSpeed * Math.pow(satDecay, satIdx);
                     return (
                       <OrbitNode
@@ -69,8 +91,13 @@ export default function Nodes({ nodes, onNodeClick }: NodesProps) {
                         speed={satSpeed}
                         size={satellite.radius}
                         color="#9ff"
-                        initialAngle={satellite.initialAngle ?? (Math.random() * Math.PI * 2)}
-                        onClick={() => onNodeClick(satId)}
+                        initialAngle={satellite.initialAngle ?? Math.random() * Math.PI * 2}
+                        paused={isPaused(satId)}
+                        onContextMenu={(satX, satY, e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setPopup({ id: satId, x: satX, y: satY });
+                        }}
                       />
                     );
                   })
