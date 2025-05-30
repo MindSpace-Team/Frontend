@@ -1,5 +1,6 @@
 import React from "react";
 import { MindNode, NodeId } from "@/store/mindGraphStore";
+import OrbitNode from "@/components/controls/Orbit";
 
 type NodesProps = {
   nodes: { [id: number]: MindNode };
@@ -7,93 +8,78 @@ type NodesProps = {
 };
 
 export default function Nodes({ nodes, onNodeClick }: NodesProps) {
-  const stars = Object.values(nodes).filter(n => n.type === "star");
-  const lines: React.ReactElement[] = [];
+  const stars = Object.values(nodes).filter(
+    (n): n is MindNode & { x: number; y: number } =>
+      n.type === "star" && typeof n.x === "number" && typeof n.y === "number"
+  );
 
-  return React.createElement(
-    React.Fragment,
-    null,
-    ...stars.map(star => {
-      const starX = star.x!;
-      const starY = star.y!;
-      return React.createElement(
-        "g",
-        { key: star.id },
-        React.createElement("circle", {
-          cx: starX,
-          cy: starY,
-          r: star.radius,
-          fill: "#ffd700",
-          stroke: "#fff",
-          strokeWidth: 3,
-          onClick: () => onNodeClick(star.id),
-          style: { cursor: "pointer" },
-        }),
-        ...star.children.map((planetId, planetIdx) => {
-          const planet = nodes[planetId];
-          const base = 140;
-          const step = 90;
-          const planetX = starX + base + step * planetIdx;
-          const planetY = starY;
-          lines.push(
-            React.createElement("line", {
-              key: `line-star-${star.id}-planet-${planet.id}`,
-              x1: starX,
-              y1: starY,
-              x2: planetX,
-              y2: planetY,
-              stroke: "#aaa",
-              strokeWidth: 2,
-              opacity: 0.5,
-            })
-          );
-          return React.createElement(
-            "g",
-            { key: planet.id },
-            React.createElement("circle", {
-              cx: planetX,
-              cy: planetY,
-              r: planet.radius,
-              fill: "#3af",
-              stroke: "#fff",
-              strokeWidth: 3,
-              onClick: () => onNodeClick(planet.id),
-              style: { cursor: "pointer" },
-            }),
-            ...planet.children.map((satId, satIdx) => {
-              const satellite = nodes[satId];
-              const baseS = 64;
-              const stepS = 48;
-              const satX = planetX + baseS + stepS * satIdx;
-              const satY = planetY;
-              lines.push(
-                React.createElement("line", {
-                  key: `line-planet-${planet.id}-satellite-${satellite.id}`,
-                  x1: planetX,
-                  y1: planetY,
-                  x2: satX,
-                  y2: satY,
-                  stroke: "#aaa",
-                  strokeWidth: 2,
-                  opacity: 0.5,
-                })
-              );
-              return React.createElement("circle", {
-                key: satellite.id,
-                cx: satX,
-                cy: satY,
-                r: satellite.radius,
-                fill: "#9ff",
-                stroke: "#fff",
-                strokeWidth: 3,
-                onClick: () => onNodeClick(satellite.id),
-                style: { cursor: "pointer" },
-              });
-            })
-          );
-        })
-      );
-    }),
-    ...lines
+  // 속도 공식, 멀어질수록 더 느려짐
+  const planetBaseSpeed = 0.3;
+  const planetDecay = 0.8;
+  const satBaseSpeed = 0.7;
+  const satDecay = 0.75;
+
+  return (
+    <>
+      {stars.map(star => (
+        <React.Fragment key={star.id}>
+          <circle
+            cx={star.x}
+            cy={star.y}
+            r={star.radius}
+            fill="#ffd700"
+            stroke="#fff"
+            strokeWidth={3}
+            onClick={() => onNodeClick(star.id)}
+            style={{ cursor: "pointer" }}
+          />
+          {star.children.map((planetId, planetIdx) => {
+            const planet = nodes[planetId];
+            const base = 400;
+            const step = 200;
+            const radius = base + step * planetIdx;
+            // ★ 지수적 감소 적용
+            const speed = planetBaseSpeed * Math.pow(planetDecay, planetIdx);
+            return (
+              <OrbitNode
+                key={planet.id}
+                centerX={star.x}
+                centerY={star.y}
+                radius={radius}
+                speed={speed}
+                size={planet.radius}
+                color="#3af"
+                initialAngle={planet.initialAngle ?? (Math.random() * Math.PI * 2)}
+                onClick={() => onNodeClick(planet.id)}
+              >
+                {(planetX, planetY) =>
+                  planet.children.map((satId, satIdx) => {
+                    const satellite = nodes[satId];
+                    const baseS = 80;
+                    const stepS = 40;
+                    const satRadius = baseS + stepS * satIdx;
+                    // ★ 지수적 감소 적용
+                    const satSpeed = satBaseSpeed * Math.pow(satDecay, satIdx);
+                    return (
+                      <OrbitNode
+                        key={satId}
+                        centerX={planetX}
+                        centerY={planetY}
+                        radius={satRadius}
+                        speed={satSpeed}
+                        size={satellite.radius}
+                        color="#9ff"
+                        initialAngle={satellite.initialAngle ?? (Math.random() * Math.PI * 2)}
+                        onClick={() => onNodeClick(satId)}
+                      />
+                    );
+                  })
+                }
+              </OrbitNode>
+            );
+          })}
+        </React.Fragment>
+      ))}
+    </>
   );
 }
