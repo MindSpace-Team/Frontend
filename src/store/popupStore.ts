@@ -15,7 +15,7 @@ type PopupState = { id: number; x: number; y: number } | null;
 interface PopupStore {
   popup: PopupState;
   setPopup: (popup: PopupState) => void;
-  pausedRootIds: Set<number>; // 정지된 트리(별)의 rootId만 저장
+  pausedRootIds: Set<number>;
   togglePauseRoot: (id: number, nodes: { [id: number]: MindNode }) => void;
   resetPaused: () => void;
 }

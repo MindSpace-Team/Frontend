@@ -21,6 +21,7 @@ interface MindGraphState {
   addPlanet: (parentId: NodeId) => void;
   addSatellite: (parentId: NodeId) => void;
   removeNode: (nodeId: NodeId) => void;
+  moveStar: (id: NodeId, x: number, y: number) => void;
 }
 
 function newId() {
@@ -117,6 +118,18 @@ export const useMindGraphStore = create<MindGraphState>((set) => ({
       return {
         nodes: newNodes,
         rootIds: state.rootIds.filter(rid => !all.includes(rid)),
+      };
+    }),
+  moveStar: (id, x, y) =>
+    set(state => {
+      const node = state.nodes[id];
+      if (!node || node.type !== "star") return state;
+      return {
+        ...state,
+        nodes: {
+          ...state.nodes,
+          [id]: { ...node, x, y }
+        }
       };
     }),
 }));

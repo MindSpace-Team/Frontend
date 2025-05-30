@@ -2,6 +2,7 @@ import React from "react";
 import { MindNode } from "@/store/mindGraphStore";
 import OrbitNode from "@/components/controls/Orbit";
 import { usePopupStore } from "@/store/popupStore";
+import MoveNode from "./moveNode";
 
 type NodesProps = {
   nodes: { [id: number]: MindNode };
@@ -38,19 +39,13 @@ export default function Nodes({ nodes }: NodesProps) {
     <>
       {stars.map(star => (
         <React.Fragment key={star.id}>
-          <circle
-            cx={star.x}
-            cy={star.y}
-            r={star.radius}
-            fill="#ffd700"
-            stroke="#fff"
-            strokeWidth={3}
+          <MoveNode
+            node={star}
             onContextMenu={e => {
               e.preventDefault();
               e.stopPropagation();
               setPopup({ id: star.id, x: star.x, y: star.y });
             }}
-            style={{ cursor: "pointer" }}
           />
           {star.children.map((planetId, planetIdx) => {
             const planet = nodes[planetId];
