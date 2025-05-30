@@ -3,13 +3,14 @@ import React, { useEffect, useState, ReactNode } from "react";
 type OrbitNodeProps = {
   centerX: number;
   centerY: number;
-  radius: number;      // 공전 반지름(거리)
-  speed: number;       // 라디안/초(공전속도)
-  size: number;        // 원 크기
+  radius: number;
+  speed: number;
+  size: number;
   color: string;
   initialAngle?: number;
-  onClick?: () => void;
-  children?: ((x: number, y: number) => ReactNode) | ReactNode; // ★ 함수도, ReactNode도 지원
+  paused?: boolean;
+  onContextMenu?: (x: number, y: number, e: React.MouseEvent<SVGCircleElement, MouseEvent>) => void;
+  children?: ((x: number, y: number) => ReactNode) | ReactNode;
 };
 
 export default function OrbitNode({
@@ -20,24 +21,26 @@ export default function OrbitNode({
   size,
   color,
   initialAngle = 0,
-  onClick,
+  paused = false,
+  onContextMenu,
   children,
 }: OrbitNodeProps) {
   const [angle, setAngle] = useState(initialAngle);
 
   useEffect(() => {
+    if (paused) return;
     let running = true;
     let last = performance.now();
     function animate(now: number) {
       if (!running) return;
       const dt = (now - last) / 1000;
-      setAngle(prev => prev + speed * dt);
+      setAngle((prev) => prev + speed * dt);
       last = now;
       requestAnimationFrame(animate);
     }
     requestAnimationFrame(animate);
     return () => { running = false; };
-  }, [speed]);
+  }, [speed, paused]);
 
   const x = centerX + radius * Math.cos(angle);
   const y = centerY + radius * Math.sin(angle);
@@ -49,14 +52,10 @@ export default function OrbitNode({
         cy={y}
         r={size}
         fill={color}
-        onClick={onClick}
+        onContextMenu={onContextMenu ? (e) => onContextMenu(x, y, e) : undefined}
         style={{ cursor: "pointer" }}
       />
-      {
-        typeof children === "function"
-          ? (children as (x: number, y: number) => ReactNode)(x, y)
-          : children
-      }
+      {typeof children === "function" ? children(x, y) : children}
     </>
   );
 }
