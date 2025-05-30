@@ -11,7 +11,7 @@ export interface MindNode {
   radius: number;
   parentId?: NodeId;
   children: NodeId[];
-  initialAngle?: number; // 추가!
+  initialAngle?: number;
 }
 
 interface MindGraphState {
@@ -41,7 +41,7 @@ export const useMindGraphStore = create<MindGraphState>((set) => ({
             type: "star",
             x,
             y,
-            radius: 64,
+            radius: 120,
             children: [],
           },
         },
@@ -57,9 +57,9 @@ export const useMindGraphStore = create<MindGraphState>((set) => ({
         id,
         type: "planet",
         parentId,
-        radius: 24,
+        radius: 40,
         children: [],
-        initialAngle: Math.random() * Math.PI * 2 // 추가!
+        initialAngle: Math.random() * Math.PI * 2
       };
       return {
         ...state,
@@ -84,7 +84,7 @@ export const useMindGraphStore = create<MindGraphState>((set) => ({
         parentId,
         radius: 12,
         children: [],
-        initialAngle: Math.random() * Math.PI * 2 // 추가!
+        initialAngle: Math.random() * Math.PI * 2
       };
       return {
         ...state,

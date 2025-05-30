@@ -35,8 +35,8 @@ export default function Nodes({ nodes, onNodeClick }: NodesProps) {
           />
           {star.children.map((planetId, planetIdx) => {
             const planet = nodes[planetId];
-            const base = 140;
-            const step = 90;
+            const base = 400;
+            const step = 200;
             const radius = base + step * planetIdx;
             // ★ 지수적 감소 적용
             const speed = planetBaseSpeed * Math.pow(planetDecay, planetIdx);
@@ -55,8 +55,8 @@ export default function Nodes({ nodes, onNodeClick }: NodesProps) {
                 {(planetX, planetY) =>
                   planet.children.map((satId, satIdx) => {
                     const satellite = nodes[satId];
-                    const baseS = 64;
-                    const stepS = 48;
+                    const baseS = 80;
+                    const stepS = 40;
                     const satRadius = baseS + stepS * satIdx;
                     // ★ 지수적 감소 적용
                     const satSpeed = satBaseSpeed * Math.pow(satDecay, satIdx);
