@@ -1,4 +1,4 @@
-"use client";
+/*"use client";
 import React from "react";
 import NodeManager from "@/components/controls/NodeManager";
 
@@ -8,4 +8,10 @@ export default function HomePage() {
       <NodeManager />
     </main>
   );
+}
+*/
+
+import Home from "@/components/home/home";
+export default function HomePage() {
+  return <Home />;
 }
