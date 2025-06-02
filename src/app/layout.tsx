@@ -1,4 +1,5 @@
 import "@/styles/globals.css";
+import Header from "@/components/header/Header";
 
 export const metadata = {
   title: "Mind Space",
@@ -9,7 +10,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko">
       <body className="min-h-screen bg-black text-white">
-        {/* 상단 NavBar, Footer 등 필요 시 추가 */}
+        <Header />
         {children}
       </body>
     </html>
