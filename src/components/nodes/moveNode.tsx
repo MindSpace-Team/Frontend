@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { useMindGraphStore } from "@/store/mindGraphStore";
 
 type MoveNodeProps = {
-  node: { id: number; x: number; y: number; radius: number };
+  node: { id: number; x: number; y: number; radius: number; color: string };
   onContextMenu?: (e: React.MouseEvent<SVGCircleElement, MouseEvent>) => void;
 };
 
@@ -55,7 +55,7 @@ export default function MoveNode({ node, onContextMenu }: MoveNodeProps) {
       cx={node.x}
       cy={node.y}
       r={node.radius}
-      fill="#ffd700"
+      fill={node.color}
       stroke="#fff"
       strokeWidth={3}
       onMouseDown={onMouseDown}

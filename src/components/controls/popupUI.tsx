@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useLayoutEffect, useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { usePopupStore } from "@/store/popupStore";
 import { useMindGraphStore } from "@/store/mindGraphStore";
@@ -15,8 +15,33 @@ function svgToScreen(svg: SVGSVGElement, x: number, y: number) {
 
 export default function PopupUI() {
   const { popup, setPopup, pausedRootIds, togglePauseRoot } = usePopupStore();
-  const { nodes, addPlanet, addSatellite, removeNode } = useMindGraphStore();
+  const {
+    nodes,
+    addPlanet,
+    addSatellite,
+    removeNode,
+    setNodeColor,
+    setNodeRadius,
+  } = useMindGraphStore();
+
+  // 색상/사이즈 팝업 상태
+  const [subPopup, setSubPopup] = useState<null | "color" | "size">(null);
+
+  // 메인 팝업 위치
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null);
+
+  // 색상, 사이즈 입력용 로컬 상태
+  const [color, setColor] = useState("#000");
+  const [radius, setRadius] = useState<number | string>(0);
+
+  useEffect(() => {
+    if (!popup) return;
+    const node = nodes[popup.id];
+    if (!node) return;
+    setColor(node.color);
+    setRadius(node.radius);
+    setSubPopup(null);
+  }, [popup, nodes]);
 
   useLayoutEffect(() => {
     if (!popup) return;
@@ -29,8 +54,8 @@ export default function PopupUI() {
   const node = nodes[popup.id];
   if (!node) return null;
 
-  const POPUP_W = 150;
-  const POPUP_H = 180;
+  const POPUP_W = 160;
+  const POPUP_H = 220;
   let left = pos.left + 30;
   let top = pos.top - 16;
   const windowW = window.innerWidth;
@@ -39,6 +64,9 @@ export default function PopupUI() {
   if (left < 0) left = 10;
   if (top + POPUP_H > windowH) top = windowH - POPUP_H - 10;
   if (top < 0) top = pos.top + 40;
+
+  const subLeft = left + POPUP_W + 8;
+  const subTop = top;
 
   const rootId = (() => {
     let cur = node;
@@ -50,7 +78,8 @@ export default function PopupUI() {
 
   const isPaused = pausedRootIds.has(rootId);
 
-  const content = (
+  // 메인 메뉴 팝업
+  const menuContent = (
     <div
       className="pause-popup"
       style={{
@@ -73,6 +102,24 @@ export default function PopupUI() {
       }}
     >
       <button
+        onClick={() => setSubPopup("color")}
+        style={{
+          border: "none", borderRadius: 0,
+          padding: "13px 24px", background: "none",
+          color: "#6fd1ff", fontWeight: 700, fontSize: 17, cursor: "pointer",
+          borderBottom: "1px solid #333",
+        }}
+      >색상 변경</button>
+      <button
+        onClick={() => setSubPopup("size")}
+        style={{
+          border: "none", borderRadius: 0,
+          padding: "13px 24px", background: "none",
+          color: "#ffe37d", fontWeight: 700, fontSize: 17, cursor: "pointer",
+          borderBottom: "1px solid #333",
+        }}
+      >사이즈 변경</button>
+      <button
         onClick={() => {
           togglePauseRoot(node.id, nodes);
           setPopup(null);
@@ -80,7 +127,7 @@ export default function PopupUI() {
         style={{
           border: "none",
           borderRadius: 0,
-          padding: "15px 24px",
+          padding: "13px 24px",
           background: "none",
           color: isPaused ? "#1ecd5a" : "#ff3535",
           fontWeight: 700,
@@ -97,7 +144,7 @@ export default function PopupUI() {
           }}
           style={{
             border: "none", borderRadius: 0,
-            padding: "15px 24px", background: "none",
+            padding: "13px 24px", background: "none",
             color: "#2ad", fontWeight: 700, fontSize: 17, cursor: "pointer",
             borderBottom: "1px solid #333",
           }}
@@ -111,7 +158,7 @@ export default function PopupUI() {
           }}
           style={{
             border: "none", borderRadius: 0,
-            padding: "15px 24px", background: "none",
+            padding: "13px 24px", background: "none",
             color: "#ad2", fontWeight: 700, fontSize: 17, cursor: "pointer",
             borderBottom: "1px solid #333",
           }}
@@ -129,7 +176,7 @@ export default function PopupUI() {
           fontWeight: 700,
           fontSize: 17,
           borderRadius: 0,
-          padding: "15px 24px",
+          padding: "13px 24px",
           cursor: "pointer",
           borderBottom: "1px solid #333",
         }}
@@ -143,12 +190,123 @@ export default function PopupUI() {
           fontWeight: 700,
           fontSize: 17,
           borderRadius: 0,
-          padding: "15px 24px",
+          padding: "13px 24px",
           cursor: "pointer"
         }}
       >닫기</button>
     </div>
   );
 
-  return ReactDOM.createPortal(content, document.body);
+  // 서브 팝업
+  const subPopupContent = subPopup && (
+    <div
+      style={{
+        position: "fixed",
+        left: subLeft,
+        top: subTop,
+        width: 120,
+        minHeight: 70,
+        background: "#31323a",
+        borderRadius: 10,
+        padding: "14px 20px",
+        color: "#fff",
+        fontSize: 15,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        boxShadow: "0 6px 20px #0007",
+        zIndex: 10000,
+        gap: 10,
+      }}
+      onMouseDown={e => e.stopPropagation()}
+    >
+      {subPopup === "color" && (
+        <>
+          <div style={{ marginBottom: 5 }}>색상 선택</div>
+          <input
+            type="color"
+            value={color}
+            onChange={e => setColor(e.target.value)}
+            style={{ width: 48, height: 48, border: "none", background: "none" }}
+          />
+          <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+            <button
+              onClick={() => {
+                setNodeColor(node.id, color);
+                setSubPopup(null);
+              }}
+              style={{
+                background: "#2ad", border: "none", color: "#fff",
+                borderRadius: 6, padding: "2px 13px", cursor: "pointer"
+              }}
+            >적용</button>
+            <button
+              onClick={() => {
+                setColor(node.color); // 입력값 복구
+                setSubPopup(null);
+              }}
+              style={{
+                background: "none", border: "1px solid #444", color: "#bbb",
+                borderRadius: 6, padding: "2px 13px", cursor: "pointer"
+              }}
+            >취소</button>
+          </div>
+        </>
+      )}
+      {subPopup === "size" && (
+        <>
+          <div style={{ marginBottom: 5 }}>사이즈 변경</div>
+          <input
+            type="number"
+            min={5}
+            max={400}
+            value={radius}
+            onChange={e => {
+              // 입력만 수정, 실제 반영은 "적용"에서!
+              setRadius(e.target.value === "" ? "" : Number(e.target.value));
+            }}
+            style={{
+              width: 64, border: "1px solid #444", background: "none",
+              color: "#fff", borderRadius: 6, padding: "5px 7px", textAlign: "center"
+            }}
+          />
+          <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+            <button
+              onClick={() => {
+                // 정상 값일 때만 반영
+                if (typeof radius === "number" && radius >= 5 && radius <= 5000) {
+                  setNodeRadius(node.id, radius);
+                  setSubPopup(null);
+                }
+              }}
+              style={{
+                background: "#2ad", border: "none", color: "#fff",
+                borderRadius: 6, padding: "2px 13px", cursor: "pointer"
+              }}
+              disabled={
+                typeof radius !== "number" || radius < 5 || radius > 5000
+              }
+            >적용</button>
+            <button
+              onClick={() => {
+                setRadius(node.radius);
+                setSubPopup(null);
+              }}
+              style={{
+                background: "none", border: "1px solid #444", color: "#bbb",
+                borderRadius: 6, padding: "2px 13px", cursor: "pointer"
+              }}
+            >취소</button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+
+  return (
+    <>
+      {ReactDOM.createPortal(menuContent, document.body)}
+      {subPopup && ReactDOM.createPortal(subPopupContent, document.body)}
+    </>
+  );
 }
