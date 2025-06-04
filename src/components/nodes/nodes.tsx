@@ -85,7 +85,7 @@ export default function Nodes({ nodes }: NodesProps) {
                   radius={planetAccRadius}
                   speed={speed}
                   size={planet.radius}
-                  color="#3af"
+                  color={planet.color}
                   initialAngle={planet.initialAngle ?? Math.random() * Math.PI * 2}
                   paused={isPaused(planet.id)}
                   onContextMenu={(planetX, planetY, e) => {
@@ -122,7 +122,7 @@ export default function Nodes({ nodes }: NodesProps) {
                           radius={satAccRadius}
                           speed={satSpeed}
                           size={satellite.radius}
-                          color="#9ff"
+                          color={satellite.color}
                           initialAngle={satellite.initialAngle ?? Math.random() * Math.PI * 2}
                           paused={isPaused(satId)}
                           onContextMenu={(satX, satY, e) => {

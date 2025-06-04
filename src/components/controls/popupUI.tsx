@@ -24,13 +24,8 @@ export default function PopupUI() {
     setNodeRadius,
   } = useMindGraphStore();
 
-  // 색상/사이즈 팝업 상태
   const [subPopup, setSubPopup] = useState<null | "color" | "size">(null);
-
-  // 메인 팝업 위치
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null);
-
-  // 색상, 사이즈 입력용 로컬 상태
   const [color, setColor] = useState("#000");
   const [radius, setRadius] = useState<number | string>(0);
 
@@ -49,6 +44,29 @@ export default function PopupUI() {
     if (!svg) return;
     setPos(svgToScreen(svg as SVGSVGElement, popup.x, popup.y));
   }, [popup]);
+
+  // 팝업 외부 클릭 시 닫기 기능 추가
+  useEffect(() => {
+    if (!popup) return;
+
+    function handleClickOutside(e: MouseEvent) {
+      const popupEl = document.querySelector(".pause-popup");
+      const subEl = document.querySelector(".pause-popup-sub");
+
+      if (
+        popupEl &&
+        !popupEl.contains(e.target as Node) &&
+        (!subEl || !subEl.contains(e.target as Node))
+      ) {
+        setPopup(null);
+      }
+    }
+
+    window.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      window.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [popup, setPopup]);
 
   if (!popup || !pos) return null;
   const node = nodes[popup.id];
@@ -78,7 +96,6 @@ export default function PopupUI() {
 
   const isPaused = pausedRootIds.has(rootId);
 
-  // 메인 메뉴 팝업
   const menuContent = (
     <div
       className="pause-popup"
@@ -197,9 +214,9 @@ export default function PopupUI() {
     </div>
   );
 
-  // 서브 팝업
   const subPopupContent = subPopup && (
     <div
+      className="pause-popup-sub" // 클래스 추가
       style={{
         position: "fixed",
         left: subLeft,
@@ -242,7 +259,7 @@ export default function PopupUI() {
             >적용</button>
             <button
               onClick={() => {
-                setColor(node.color); // 입력값 복구
+                setColor(node.color);
                 setSubPopup(null);
               }}
               style={{
@@ -262,7 +279,6 @@ export default function PopupUI() {
             max={400}
             value={radius}
             onChange={e => {
-              // 입력만 수정, 실제 반영은 "적용"에서!
               setRadius(e.target.value === "" ? "" : Number(e.target.value));
             }}
             style={{
@@ -273,7 +289,6 @@ export default function PopupUI() {
           <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
             <button
               onClick={() => {
-                // 정상 값일 때만 반영
                 if (typeof radius === "number" && radius >= 5 && radius <= 5000) {
                   setNodeRadius(node.id, radius);
                   setSubPopup(null);
