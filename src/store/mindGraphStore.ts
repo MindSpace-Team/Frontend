@@ -9,6 +9,7 @@ export interface MindNode {
   x?: number;
   y?: number;
   radius: number;
+  color: string;
   parentId?: NodeId;
   children: NodeId[];
   initialAngle?: number;
@@ -22,6 +23,8 @@ interface MindGraphState {
   addSatellite: (parentId: NodeId) => void;
   removeNode: (nodeId: NodeId) => void;
   moveStar: (id: NodeId, x: number, y: number) => void;
+  setNodeColor: (id: NodeId, color: string) => void;
+  setNodeRadius: (id: NodeId, radius: number) => void;
 }
 
 function newId() {
@@ -43,6 +46,7 @@ export const useMindGraphStore = create<MindGraphState>((set) => ({
             x,
             y,
             radius: 120,
+            color: "#ffd700",
             children: [],
           },
         },
@@ -59,6 +63,7 @@ export const useMindGraphStore = create<MindGraphState>((set) => ({
         type: "planet",
         parentId,
         radius: 40,
+        color: "#3af",
         children: [],
         initialAngle: Math.random() * Math.PI * 2
       };
@@ -84,6 +89,7 @@ export const useMindGraphStore = create<MindGraphState>((set) => ({
         type: "satellite",
         parentId,
         radius: 12,
+        color: "#9ff",
         children: [],
         initialAngle: Math.random() * Math.PI * 2
       };
@@ -132,4 +138,18 @@ export const useMindGraphStore = create<MindGraphState>((set) => ({
         }
       };
     }),
+  setNodeColor: (id, color) =>
+    set(state => ({
+      nodes: {
+        ...state.nodes,
+        [id]: { ...state.nodes[id], color }
+      }
+    })),
+  setNodeRadius: (id, radius) =>
+    set(state => ({
+      nodes: {
+        ...state.nodes,
+        [id]: { ...state.nodes[id], radius }
+      }
+    })),
 }));
