@@ -1,4 +1,3 @@
-// SatelliteNode.tsx
 import React from "react";
 import { MindNode } from "@/store/mindGraphStore";
 import OrbitNode from "@/components/controls/Orbit";
