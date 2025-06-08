@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+@keyframes flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
+  20%, 24%, 55% { opacity: 0.5; }
+}
+
+@keyframes scanbar {
+  0%   { top: -16px; opacity: 0; }
+  8%   { opacity: 0.25; }
+  40%  { top: 85%; opacity: 0.08; }
+  100% { top: 110%; opacity: 0; }
+}
+
+.led-header {
+  position: absolute;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 1280px;
+  height: 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #111;
+
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.10) 0,
+    rgba(255,255,255,0.10) 1px,
+    transparent 1px,
+    transparent 6px
+  );
+  backdrop-filter: blur(2px);
+
+  border: 2.5px solid #fff;
+  border-radius: 8px;
+  padding: 0 1.5rem;
+
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.96rem;
+  color: #fff;
+  text-shadow: 0 0 8px #fff, 0 0 16px #fff;
+  box-shadow: 0 0 15px #fff4;
+  animation: flicker 3s infinite;
+  overflow: hidden;
+  z-index: 50;
+}
+
+.led-header::after {
+  content: '';
+  position: absolute;
+  left: 0; width: 100%;
+  height: 18px;
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.10) 0%,
+    rgba(255,255,255,0.23) 50%,
+    rgba(255,255,255,0.06) 100%
+  );
+  pointer-events: none;
+  border-radius: 8px;
+  filter: blur(1.2px);
+  animation: scanbar 2.8s linear infinite;
+  opacity: 0.16;
+}
+
+.led-header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border-radius: 8px;
+  box-shadow: inset 0 0 35px #fff5, inset 0 2px 10px #fff3;
+  pointer-events: none;
+}
+
+.led-logo img {
+  height: 2.5rem;
+  filter: drop-shadow(0 0 8px #fff) drop-shadow(0 0 4px #fff);
+}
+
+.led-nav {
+  display: flex;
+  gap: 2.5rem;
+}
+
+.led-nav a {
+  color: #fff;
+  font-family: inherit;
+  font-size: 1.08em;
+  letter-spacing: 0.16em;
+  text-shadow: 0 0 8px #fff, 0 0 18px #fff;
+  transition: color 0.16s;
+}
+
+.led-nav a:hover {
+  color: #fffbe5;
+}

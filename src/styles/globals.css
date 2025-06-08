@@ -1,0 +1,59 @@
+@import "@fontsource/orbitron";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #__next {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.font-orbitron {
+  font-family: 'Orbitron', sans-serif;
+}
+
+.glitch-button {
+  @apply relative px-6 py-3 rounded-lg bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-700 text-white font-bold overflow-hidden shadow-[0_0_12px_rgba(99,102,241,0.6)] hover:scale-105 hover:shadow-[0_0_25px_rgba(99,102,241,0.9)] transition duration-300;
+}
+
+.glitch-text {
+  position: relative;
+  display: inline-block;
+  color: white;
+}
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  color: #fff;
+  background: transparent;
+  clip: rect(0, 0, 0, 0);
+}
+.glitch-text::before {
+  animation: glitchTop 2s infinite linear;
+  color: #0ff;
+  z-index: -1;
+}
+.glitch-text::after {
+  animation: glitchBottom 2s infinite linear;
+  color: #f0f;
+  z-index: -1;
+}
+@keyframes glitchTop {
+  0% { clip: rect(0, 9999px, 0, 0); }
+  10% { clip: rect(5px, 9999px, 15px, 0); transform: translate(-2px, -2px); }
+  20% { clip: rect(10px, 9999px, 20px, 0); transform: translate(2px, -1px); }
+  100% { clip: rect(0, 9999px, 0, 0); transform: translate(0, 0); }
+}
+@keyframes glitchBottom {
+  0% { clip: rect(0, 9999px, 0, 0); }
+  10% { clip: rect(20px, 9999px, 30px, 0); transform: translate(2px, 2px); }
+  20% { clip: rect(25px, 9999px, 35px, 0); transform: translate(-1px, 2px); }
+  100% { clip: rect(0, 9999px, 0, 0); transform: translate(0, 0); }
+}

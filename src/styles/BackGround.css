@@ -1,0 +1,24 @@
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.animate-twinkle {
+  animation: twinkle 2.4s infinite ease-in-out;
+}
+
+@keyframes shooting {
+  0% {
+    transform: rotate(40deg) translate(0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(40deg) translate(300px, 0);
+    opacity: 0;
+  }
+}
+
+.animate-shooting {
+  animation: shooting 1.2s ease-out forwards;
+  transform-origin: left center;
+}
