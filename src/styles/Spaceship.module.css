@@ -1,26 +1,45 @@
 .internal {
   width: 100vw;
   height: 100vh;
-  background: #fff;                  /* 우주선 내부 흰색 */
+  background: #d7d7d7;
   position: relative;
   overflow: hidden;
 }
 
 .window {
   position: absolute;
-  top: 140px;                        /* 창문 위쪽 여백, 원하면 더 내릴 수 있음 */
+  top: 140px;
   left: 50%;
   transform: translateX(-50%);
-  width: 82vw;                       /* 거의 전체 화면을 차지하는 넓은 창문 */
-  height: 70vh;                      /* 세로도 넉넉하게, vh 단위라 해상도에 따라 적응 */
-  border-radius: 32px;               /* 살짝 둥근 직사각형 창문 */
-  border: 6px solid #70e8ff;         /* 파란 창문 테두리 */
+  width: 82vw;
+  height: 70vh;
+  border-radius: 100px;
+  border: 6px solid #70e8ff;
   box-shadow: 0 0 64px 8px #65d9fa33;
-  background: #181e3ee0;             /* 어두운 우주(바깥) 효과, 살짝 투명 */
-  overflow: hidden;                  /* children(밖) 영역만 딱 보임 */
+  background: #181e3ee0;
+  overflow: hidden;
   z-index: 2;
   display: flex;
   align-items: stretch;
   justify-content: stretch;
-  pointer-events: auto;              /* 창문 내부에서 스크롤 등 이벤트 허용 */
+  pointer-events: auto;
+}
+
+.window-frame {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 82vw;
+  height: 70vh;
+  background: #b0c8df;           /* 프레임 컬러 */
+  border-radius: 40px;
+  box-shadow:
+    0 0 32px 8px #9bd6fa88,
+    0 8px 48px 16px #446d9044;
+  padding: 28px;                 /* 창문과 프레임 간격: 프레임 두께 */
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  z-index: 2;
 }

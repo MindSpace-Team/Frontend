@@ -8,20 +8,28 @@ import "@/styles/home.css";
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const isScrolling = useRef(false);
 
-  // 가로 스크롤
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     const handleWheel = (e: WheelEvent) => {
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // 이미 가로 스크롤이면 무시
-      if (container.scrollWidth <= container.clientWidth) return; // 스크롤 필요없음
+      if (isScrolling.current) return;
       e.preventDefault();
+
+      const direction = e.deltaY > 0 ? 1 : -1;
+      const scrollAmount = window.innerWidth;
+
       container.scrollBy({
-        left: e.deltaY,
+        left: direction * scrollAmount,
         behavior: "smooth",
       });
+
+      isScrolling.current = true;
+      setTimeout(() => {
+        isScrolling.current = false;
+      }, 800);
     };
 
     container.addEventListener("wheel", handleWheel, { passive: false });
@@ -29,9 +37,9 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="relative h-screen w-screen bg-black text-white font-orbitron">
+    <div className="relative h-screen w-screen overflow-hidden text-white font-orbitron">
       <Spaceship>
-        {/* 창문 영역에만 children 보임 */}
+        {/* 창문을 통해 보일 영역 */}
         <div className="w-full h-full relative">
           <StarsBackground />
           <div
@@ -40,26 +48,31 @@ export default function Home() {
             style={{
               width: "100%",
               height: "100%",
-              overflowX: "auto",
-              overflowY: "hidden",
-              display: "flex",
-              flexDirection: "row",
-              scrollSnapType: "x mandatory",
-              position: "relative",
-              zIndex: 1,
+              position: "absolute",
+              top: 0,
+              left: 0,
+              overflow: "auto",
             }}
           >
             <section className="home-section">
-              <h1 className="text-4xl font-bold">🧠 Mind Space에 오신 걸 환영합니다!</h1>
+              <h1 className="text-4xl font-bold">
+                🧠 Mind Space에 오신 걸 환영합니다!
+              </h1>
             </section>
             <section className="home-section">
-              <h2 className="text-3xl">1. 별을 우클릭해 행성을 추가하세요 🌍</h2>
+              <h2 className="text-3xl">
+                1. 별을 우클릭해 행성을 추가하세요 🌍
+              </h2>
             </section>
             <section className="home-section">
-              <h2 className="text-3xl">2. 행성에 위성을 추가할 수도 있어요 🛰️</h2>
+              <h2 className="text-3xl">
+                2. 행성에 위성을 추가할 수도 있어요 🛰️
+              </h2>
             </section>
             <section className="home-section">
-              <h2 className="text-3xl">3. 노드를 클릭해 상세 내용을 작성하세요 📝</h2>
+              <h2 className="text-3xl">
+                3. 노드를 클릭해 상세 내용을 작성하세요 📝
+              </h2>
             </section>
           </div>
         </div>
