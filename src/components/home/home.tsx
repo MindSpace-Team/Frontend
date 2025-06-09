@@ -1,6 +1,5 @@
 "use client";
 import React, { useRef, useEffect } from "react";
-import StarsBackground from "@/components/home/StarsBackground";
 import "@/styles/globals.css";
 import "@/styles/BackGround.css";
 import "@/styles/home.css";
@@ -37,42 +36,41 @@ export default function Home() {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden text-white font-orbitron">
-        <div className="w-full h-full relative">
-          <StarsBackground />
-          <div
-            className="home-scroll-container"
-            ref={containerRef}
-            style={{
-              width: "100%",
-              height: "100%",
-              position: "absolute",
-              top: 0,
-              left: 0,
-              overflow: "auto",
-            }}
-          >
-            <section className="home-section">
-              <h2 className="text-3xl">
-                🧠 Mind Space에 오신 걸 환영합니다!
-              </h2>
-            </section>
-            <section className="home-section">
-              <h2 className="text-3xl">
-                1. 별을 우클릭해 행성을 추가하세요 🌍
-              </h2>
-            </section>
-            <section className="home-section">
-              <h2 className="text-3xl">
-                2. 행성에 위성을 추가할 수도 있어요 🛰️
-              </h2>
-            </section>
-            <section className="home-section">
-              <h2 className="text-3xl">
-                3. 노드를 클릭해 상세 내용을 작성하세요 📝
-              </h2>
-            </section>
-          </div>
+      <div className="w-full h-full relative">
+        <div
+          className="home-scroll-container"
+          ref={containerRef}
+          style={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            overflow: "auto",
+          }}
+        >
+          <section className="home-section">
+            <h2 className="text-3xl">
+              🧠 Mind Space에 오신 걸 환영합니다!
+            </h2>
+          </section>
+          <section className="home-section">
+            <h2 className="text-3xl">
+              1. 별을 우클릭해 행성을 추가하세요 🌍
+            </h2>
+          </section>
+          <section className="home-section">
+            <h2 className="text-3xl">
+              2. 행성에 위성을 추가할 수도 있어요 🛰️
+            </h2>
+          </section>
+          <section className="home-section">
+            <h2 className="text-3xl">
+              3. 노드를 클릭해 상세 내용을 작성하세요 📝
+            </h2>
+          </section>
         </div>
+      </div>
     </div>
   );
 }
