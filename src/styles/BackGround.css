@@ -1,10 +1,12 @@
 @keyframes twinkle {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
+  0%, 100% { filter: brightness(0.8) blur(var(--tw-blur, 1px)); }
+  45% { filter: brightness(1.6) blur(var(--tw-blur, 1px)); }
+  60% { filter: brightness(1.1) blur(var(--tw-blur, 1px)); }
 }
 
 .animate-twinkle {
-  animation: twinkle 2.4s infinite ease-in-out;
+  animation: twinkle 2.8s infinite ease-in-out;
+  will-change: filter;
 }
 
 @keyframes shooting {

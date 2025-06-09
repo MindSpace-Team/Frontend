@@ -14,21 +14,28 @@ export default function StarsBackground() {
 
   // 별 생성
   useEffect(() => {
-    const starColors = ["#ffffff", "#ffd700", "#ffa500", "#add8e6", "#9be2e8"];
-    const generated = Array.from({ length: 200 }, (_, i) => {
-      const size = Math.random() * 2 + 1;
+    const starColors = ["#fff", "#ffd700", "#ffbb99", "#b8e0ff", "#caf6ff"];
+    const generated = Array.from({ length: 160 }, (_, i) => {
+      const size = Math.random() * 2 + 1.2;
+      const opacity = 0.7 + Math.random() * 0.3;
+      const color = starColors[Math.floor(Math.random() * starColors.length)];
+      const glow = size > 2
+        ? `0 0 8px 2px ${color}, 0 0 24px 4px ${color}77`
+        : `0 0 4px 1px ${color}`;
       return (
         <div
           key={`star-${i}`}
-          className="absolute rounded-full blur-sm animate-twinkle"
+          className="absolute rounded-full animate-twinkle"
           style={{
             top: `${Math.random() * 100}%`,
             left: `${Math.random() * 100}%`,
             width: `${size}px`,
             height: `${size}px`,
-            backgroundColor: starColors[Math.floor(Math.random() * starColors.length)],
-            opacity: 0.3 + Math.random() * 0.4,
+            backgroundColor: color,
+            opacity,
+            boxShadow: glow,
             animationDelay: `${Math.random() * 5}s`,
+            filter: size > 2 ? "blur(0.5px)" : "none", // 큰 별만 아주 약하게 blur
           }}
         />
       );
@@ -64,14 +71,14 @@ export default function StarsBackground() {
       {/* 별똥별 */}
       {shootings.map(({ id, top, left }) => (
         <div
-        key={`shooting-${id}`}
-        className="absolute h-0.5 w-40 opacity-80 animate-shooting"
-        style={{
+          key={`shooting-${id}`}
+          className="absolute h-0.5 w-40 opacity-80 animate-shooting"
+          style={{
             top: `${top}%`,
             left: `${left}%`,
             background: "linear-gradient(to left, white, transparent)",
             transformOrigin: "left center",
-        }}
+          }}
         />
       ))}
     </div>

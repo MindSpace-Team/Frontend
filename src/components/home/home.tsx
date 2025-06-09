@@ -1,7 +1,6 @@
 "use client";
 import React, { useRef, useEffect } from "react";
 import StarsBackground from "@/components/home/StarsBackground";
-import Spaceship from "@/components/home/Spaceship";
 import "@/styles/globals.css";
 import "@/styles/BackGround.css";
 import "@/styles/home.css";
@@ -38,8 +37,6 @@ export default function Home() {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden text-white font-orbitron">
-      <Spaceship>
-        {/* 창문을 통해 보일 영역 */}
         <div className="w-full h-full relative">
           <StarsBackground />
           <div
@@ -76,7 +73,6 @@ export default function Home() {
             </section>
           </div>
         </div>
-      </Spaceship>
     </div>
   );
 }
