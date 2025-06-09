@@ -18,3 +18,12 @@
   justify-content: center;
   scroll-snap-align: start;
 }
+
+.planet-scroll-wrapper {
+  width: 100vw;
+  height: 350px; /* 행성+텍스트 보여줄 만큼만 */
+  position: relative;
+  overflow: hidden;
+  pointer-events: auto;
+  /* 필요시 z-index 등 추가 */
+}

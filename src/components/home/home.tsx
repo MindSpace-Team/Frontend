@@ -52,9 +52,9 @@ export default function Home() {
             }}
           >
             <section className="home-section">
-              <h1 className="text-4xl font-bold">
+              <h2 className="text-3xl">
                 🧠 Mind Space에 오신 걸 환영합니다!
-              </h1>
+              </h2>
             </section>
             <section className="home-section">
               <h2 className="text-3xl">
