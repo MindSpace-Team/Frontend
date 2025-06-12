@@ -106,7 +106,7 @@ export default function Canvas({ children, onCanvasContextMenu }: CanvasProps) {
       style={{
         width: "100vw",
         height: "100vh",
-        background: "#0d1117",
+        background: "#000",
         overflow: "hidden",
         position: "fixed",
         left: 0,
