@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import "@/styles/globals.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -16,7 +15,6 @@ export default function Login() {
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen w-full text-white font-orbitron overflow-hidden">
-
       <div className="flex flex-col items-center gap-6 w-72 sm:w-80 z-10">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
           <input
