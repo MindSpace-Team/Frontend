@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { MindNode } from "@/store/mindGraphStore";
+import { MindNode } from "@/types/mind-graph";
 
 // 별(트리) 최상위 id 찾기
 function findRootId(id: number, nodes: { [id: number]: MindNode }): number {
