@@ -1,0 +1,26 @@
+@keyframes twinkle {
+  0%, 100% { filter: brightness(0.8) blur(var(--tw-blur, 1px)); }
+  45% { filter: brightness(1.6) blur(var(--tw-blur, 1px)); }
+  60% { filter: brightness(1.1) blur(var(--tw-blur, 1px)); }
+}
+
+.animate-twinkle {
+  animation: twinkle 2.8s infinite ease-in-out;
+  will-change: filter;
+}
+
+@keyframes shooting {
+  0% {
+    transform: rotate(40deg) translate(0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(40deg) translate(300px, 0);
+    opacity: 0;
+  }
+}
+
+.animate-shooting {
+  animation: shooting 1.2s ease-out forwards;
+  transform-origin: left center;
+}

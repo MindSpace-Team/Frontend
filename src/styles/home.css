@@ -1,0 +1,29 @@
+.home-scroll-container {
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  display: flex;
+  flex-direction: row;
+  scroll-snap-type: x mandatory;
+  overflow: hidden !important;
+}
+
+.home-section {
+  flex: none;
+  width: 100%;
+  min-width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: start;
+}
+
+.planet-scroll-wrapper {
+  width: 100vw;
+  height: 350px; /* 행성+텍스트 보여줄 만큼만 */
+  position: relative;
+  overflow: hidden;
+  pointer-events: auto;
+  /* 필요시 z-index 등 추가 */
+}

@@ -1,5 +1,5 @@
-import "@/styles/globals.css";
 import Header from "@/components/header/Header";
+import "@/styles/globals.css";
 
 export const metadata = {
   title: "Mind Space",
@@ -9,9 +9,9 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
-      <body className="min-h-screen bg-black text-white">
+      <body className="min-h-screen bg-black text-white relative overflow-hidden">
         <Header />
-        {children}
+        <div className="relative z-10">{children}</div>
       </body>
     </html>
   );

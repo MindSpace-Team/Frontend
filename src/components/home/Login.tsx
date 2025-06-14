@@ -14,34 +14,37 @@ export default function Login() {
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-72">
-        <input
-          type="email"
-          placeholder="이메일"
-          className="p-2 rounded text-black"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="비밀번호"
-          className="p-2 rounded text-black"
-          value={pw}
-          onChange={e => setPw(e.target.value)}
-          required
-        />
-        <button type="submit" className="mt-2 p-2 bg-blue-600 rounded">
-          로그인
+    <div className="relative flex flex-col items-center justify-center min-h-screen w-full text-white font-orbitron overflow-hidden">
+      <div className="flex flex-col items-center gap-6 w-72 sm:w-80 z-10">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
+          <input
+            type="email"
+            placeholder="이메일"
+            className="w-full p-3 rounded bg-white/10 text-white placeholder-white/60 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="비밀번호"
+            className="w-full p-3 rounded bg-white/10 text-white placeholder-white/60 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            value={pw}
+            onChange={e => setPw(e.target.value)}
+            required
+          />
+          <button type="submit" className="glitch-button text-lg tracking-wide w-full">
+            <span className="glitch-text" data-text="로그인">로그인</span>
+          </button>
+        </form>
+
+        <button
+          onClick={() => router.push("/")}
+          className="glitch-button text-lg tracking-wide w-full"
+        >
+          <span className="glitch-text" data-text="뒤로가기">뒤로가기</span>
         </button>
-      </form>
-      <button
-        className="mt-6 px-4 py-2 bg-gray-600 rounded"
-        onClick={() => router.push("/")}
-      >
-        뒤로가기
-      </button>
+      </div>
     </div>
   );
 }
