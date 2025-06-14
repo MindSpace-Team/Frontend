@@ -1,5 +1,5 @@
 import React from "react";
-import { MindNode } from "@/store/mindGraphStore";
+import { MindNode } from "@/types/mind-graph";
 import { usePopupStore } from "@/store/popupStore";
 import MoveNode from "./moveNode";
 import PlanetNode from "./PlanetNode";

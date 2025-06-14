@@ -1,4 +1,4 @@
-import { MindNode } from "@/store/mindGraphStore";
+import { MindNode } from "@/types/mind-graph";
 
 export function findRootId(id: number, nodes: { [id: number]: MindNode }): number {
   let cur = nodes[id];

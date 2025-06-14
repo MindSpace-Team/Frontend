@@ -1,5 +1,5 @@
 import React from "react";
-import { MindNode } from "@/store/mindGraphStore";
+import { MindNode } from "@/types/mind-graph";
 import OrbitNode from "@/components/controls/Orbit";
 import { usePopupStore } from "@/store/popupStore";
 import { findRootId } from "./utils";

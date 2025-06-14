@@ -1,5 +1,5 @@
 import React from "react";
-import { MindNode } from "@/store/mindGraphStore";
+import { MindNode } from "@/types/mind-graph";
 import StarNode from "./StarNode";
 
 export type NodesProps = {
