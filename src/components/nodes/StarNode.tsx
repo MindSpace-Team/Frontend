@@ -10,9 +10,10 @@ const PLANET_MIN_GAP = 300;
 interface Props {
   star: MindNode & { x: number; y: number };
   nodes: { [id: number]: MindNode };
+  onContextMenu?: (e: React.MouseEvent, nodeId: string) => void;
 }
 
-export default function StarNode({ star, nodes }: Props) {
+export default function StarNode({ star, nodes, onContextMenu }: Props) {
   const setPopup = usePopupStore(s => s.setPopup);
   const planetIds = star.children;
   let planetAccRadius = 0;
@@ -24,7 +25,11 @@ export default function StarNode({ star, nodes }: Props) {
         onContextMenu={e => {
           e.preventDefault();
           e.stopPropagation();
-          setPopup({ id: star.id, x: star.x, y: star.y });
+          if (onContextMenu) {
+            onContextMenu(e, star.id.toString());
+          } else {
+            setPopup({ id: star.id, x: star.x, y: star.y });
+          }
         }}
       />
 

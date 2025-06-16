@@ -20,8 +20,12 @@ export default function Canvas({ children, onCanvasContextMenu }: CanvasProps) {
   const [size, setSize] = useState({ width: INIT_W, height: INIT_H });
 
   useEffect(() => {
-    const down = (e: KeyboardEvent) => { if (e.code === "Space") setIsSpaceDown(true); };
-    const up = (e: KeyboardEvent) => { if (e.code === "Space") setIsSpaceDown(false); };
+    const down = (e: KeyboardEvent) => {
+      if (e.code === "Space") setIsSpaceDown(true);
+    };
+    const up = (e: KeyboardEvent) => {
+      if (e.code === "Space") setIsSpaceDown(false);
+    };
     window.addEventListener("keydown", down);
     window.addEventListener("keyup", up);
     return () => {
@@ -53,8 +57,14 @@ export default function Canvas({ children, onCanvasContextMenu }: CanvasProps) {
       let newH = viewBox.h * (e.deltaY > 0 ? scaleBy : 1 / scaleBy);
 
       const newScale = INIT_W / newW;
-      if (newScale < MIN_SCALE) { newW = INIT_W / MIN_SCALE; newH = INIT_H / MIN_SCALE; }
-      if (newScale > MAX_SCALE) { newW = INIT_W / MAX_SCALE; newH = INIT_H / MAX_SCALE; }
+      if (newScale < MIN_SCALE) {
+        newW = INIT_W / MIN_SCALE;
+        newH = INIT_H / MIN_SCALE;
+      }
+      if (newScale > MAX_SCALE) {
+        newW = INIT_W / MAX_SCALE;
+        newH = INIT_H / MAX_SCALE;
+      }
 
       const kx = (mouseX - viewBox.x) / viewBox.w;
       const ky = (mouseY - viewBox.y) / viewBox.h;
@@ -97,8 +107,7 @@ export default function Canvas({ children, onCanvasContextMenu }: CanvasProps) {
 
   useEffect(() => {
     if (!svgRef.current) return;
-    svgRef.current.style.cursor =
-      isSpaceDown ? (dragging ? "grabbing" : "grab") : "crosshair";
+    svgRef.current.style.cursor = isSpaceDown ? (dragging ? "grabbing" : "grab") : "crosshair";
   }, [isSpaceDown, dragging]);
 
   return (
@@ -106,7 +115,7 @@ export default function Canvas({ children, onCanvasContextMenu }: CanvasProps) {
       style={{
         width: "100vw",
         height: "100vh",
-        background: "#000",
+        background: "#000000",
         overflow: "hidden",
         position: "fixed",
         left: 0,
@@ -114,18 +123,31 @@ export default function Canvas({ children, onCanvasContextMenu }: CanvasProps) {
         zIndex: 0,
       }}
     >
-      {React.cloneElement(children, {
-        ref: svgRef,
-        width: size.width,
-        height: size.height,
-        viewBox: `${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`,
-        onMouseDown,
-        onMouseMove,
-        onMouseUp,
-        onMouseLeave: onMouseUp,
-        onContextMenu: onCanvasContextMenu,
-        tabIndex: 0,
-      })}
+      <svg
+        ref={svgRef}
+        width={size.width}
+        height={size.height}
+        viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onMouseLeave={onMouseUp}
+        onContextMenu={onCanvasContextMenu}
+        tabIndex={0}
+      >
+        {/* webp 배경 이미지 삽입 */}
+        <image
+          href="/space/space.webp"
+          x={viewBox.x}
+          y={viewBox.y}
+          width={viewBox.w}
+          height={viewBox.h}
+          preserveAspectRatio="xMidYMid slice"
+          pointerEvents="none"
+        />
+        {children.props.children}
+      </svg>
+
       <span
         style={{
           color: "#fff",

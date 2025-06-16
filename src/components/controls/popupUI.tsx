@@ -1,17 +1,7 @@
-import React, { useLayoutEffect, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { usePopupStore } from "@/store/popupStore";
 import { useMindGraphStore } from "@/store/mindGraphStore";
-
-function svgToScreen(svg: SVGSVGElement, x: number, y: number) {
-  const pt = svg.createSVGPoint();
-  pt.x = x;
-  pt.y = y;
-  const screenCTM = svg.getScreenCTM();
-  if (!screenCTM) return { left: x, top: y };
-  const transformed = pt.matrixTransform(screenCTM);
-  return { left: transformed.x, top: transformed.y };
-}
 
 export default function PopupUI() {
   const { popup, setPopup, pausedRootIds, togglePauseRoot } = usePopupStore();
@@ -25,7 +15,6 @@ export default function PopupUI() {
   } = useMindGraphStore();
 
   const [subPopup, setSubPopup] = useState<null | "color" | "size">(null);
-  const [pos, setPos] = useState<{ left: number; top: number } | null>(null);
   const [color, setColor] = useState("#000");
   const [radius, setRadius] = useState<number | string>(0);
 
@@ -37,13 +26,6 @@ export default function PopupUI() {
     setRadius(node.radius);
     setSubPopup(null);
   }, [popup, nodes]);
-
-  useLayoutEffect(() => {
-    if (!popup) return;
-    const svg = document.querySelector("svg");
-    if (!svg) return;
-    setPos(svgToScreen(svg as SVGSVGElement, popup.x, popup.y));
-  }, [popup]);
 
   // 팝업 외부 클릭 시 닫기 기능 추가
   useEffect(() => {
@@ -68,23 +50,9 @@ export default function PopupUI() {
     };
   }, [popup, setPopup]);
 
-  if (!popup || !pos) return null;
+  if (!popup) return null;
   const node = nodes[popup.id];
   if (!node) return null;
-
-  const POPUP_W = 160;
-  const POPUP_H = 220;
-  let left = pos.left + 30;
-  let top = pos.top - 16;
-  const windowW = window.innerWidth;
-  const windowH = window.innerHeight;
-  if (left + POPUP_W > windowW) left = pos.left - POPUP_W - 30;
-  if (left < 0) left = 10;
-  if (top + POPUP_H > windowH) top = windowH - POPUP_H - 10;
-  if (top < 0) top = pos.top + 40;
-
-  const subLeft = left + POPUP_W + 8;
-  const subTop = top;
 
   const rootId = (() => {
     let cur = node;
@@ -101,19 +69,19 @@ export default function PopupUI() {
       className="pause-popup"
       style={{
         position: "fixed",
-        left,
-        top,
-        width: POPUP_W,
-        minHeight: 110,
+        left: 0,
+        right: 0,
+        bottom: 0,
         background: "#26272d",
-        borderRadius: 10,
-        padding: "8px 0",
+        padding: "12px 24px",
         color: "#fff",
         fontSize: 16,
         display: "flex",
-        flexDirection: "column",
-        alignItems: "stretch",
-        boxShadow: "0 6px 24px #0006",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "16px",
+        boxShadow: "0 -6px 24px #0006",
         zIndex: 9999,
         userSelect: "none",
       }}
@@ -121,19 +89,17 @@ export default function PopupUI() {
       <button
         onClick={() => setSubPopup("color")}
         style={{
-          border: "none", borderRadius: 0,
-          padding: "13px 24px", background: "none",
-          color: "#6fd1ff", fontWeight: 700, fontSize: 17, cursor: "pointer",
-          borderBottom: "1px solid #333",
+          border: "none", borderRadius: 8,
+          padding: "8px 16px", background: "#333",
+          color: "#6fd1ff", fontWeight: 700, fontSize: 15, cursor: "pointer",
         }}
       >색상 변경</button>
       <button
         onClick={() => setSubPopup("size")}
         style={{
-          border: "none", borderRadius: 0,
-          padding: "13px 24px", background: "none",
-          color: "#ffe37d", fontWeight: 700, fontSize: 17, cursor: "pointer",
-          borderBottom: "1px solid #333",
+          border: "none", borderRadius: 8,
+          padding: "8px 16px", background: "#333",
+          color: "#ffe37d", fontWeight: 700, fontSize: 15, cursor: "pointer",
         }}
       >사이즈 변경</button>
       <button
@@ -142,15 +108,10 @@ export default function PopupUI() {
           setPopup(null);
         }}
         style={{
-          border: "none",
-          borderRadius: 0,
-          padding: "13px 24px",
-          background: "none",
+          border: "none", borderRadius: 8,
+          padding: "8px 16px", background: "#333",
           color: isPaused ? "#1ecd5a" : "#ff3535",
-          fontWeight: 700,
-          fontSize: 17,
-          cursor: "pointer",
-          borderBottom: "1px solid #333",
+          fontWeight: 700, fontSize: 15, cursor: "pointer",
         }}
       >{isPaused ? "재생" : "정지"}</button>
       {node.type === "star" && (
@@ -160,10 +121,9 @@ export default function PopupUI() {
             setPopup(null);
           }}
           style={{
-            border: "none", borderRadius: 0,
-            padding: "13px 24px", background: "none",
-            color: "#2ad", fontWeight: 700, fontSize: 17, cursor: "pointer",
-            borderBottom: "1px solid #333",
+            border: "none", borderRadius: 8,
+            padding: "8px 16px", background: "#333",
+            color: "#2ad", fontWeight: 700, fontSize: 15, cursor: "pointer",
           }}
         >행성 추가</button>
       )}
@@ -174,10 +134,9 @@ export default function PopupUI() {
             setPopup(null);
           }}
           style={{
-            border: "none", borderRadius: 0,
-            padding: "13px 24px", background: "none",
-            color: "#ad2", fontWeight: 700, fontSize: 17, cursor: "pointer",
-            borderBottom: "1px solid #333",
+            border: "none", borderRadius: 8,
+            padding: "8px 16px", background: "#333",
+            color: "#ad2", fontWeight: 700, fontSize: 15, cursor: "pointer",
           }}
         >위성 추가</button>
       )}
@@ -187,28 +146,17 @@ export default function PopupUI() {
           setPopup(null);
         }}
         style={{
-          background: "none",
-          color: "#faa",
-          border: "none",
-          fontWeight: 700,
-          fontSize: 17,
-          borderRadius: 0,
-          padding: "13px 24px",
-          cursor: "pointer",
-          borderBottom: "1px solid #333",
+          border: "none", borderRadius: 8,
+          padding: "8px 16px", background: "#333",
+          color: "#faa", fontWeight: 700, fontSize: 15, cursor: "pointer",
         }}
       >삭제</button>
       <button
         onClick={() => setPopup(null)}
         style={{
-          background: "none",
-          color: "#aaa",
-          border: "none",
-          fontWeight: 700,
-          fontSize: 17,
-          borderRadius: 0,
-          padding: "13px 24px",
-          cursor: "pointer"
+          border: "none", borderRadius: 8,
+          padding: "8px 16px", background: "#333",
+          color: "#aaa", fontWeight: 700, fontSize: 15, cursor: "pointer",
         }}
       >닫기</button>
     </div>
@@ -216,13 +164,12 @@ export default function PopupUI() {
 
   const subPopupContent = subPopup && (
     <div
-      className="pause-popup-sub" // 클래스 추가
+      className="pause-popup-sub"
       style={{
         position: "fixed",
-        left: subLeft,
-        top: subTop,
-        width: 120,
-        minHeight: 70,
+        left: "50%",
+        bottom: "80px",
+        transform: "translateX(-50%)",
         background: "#31323a",
         borderRadius: 10,
         padding: "14px 20px",
