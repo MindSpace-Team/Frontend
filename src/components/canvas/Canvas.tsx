@@ -1,5 +1,7 @@
 "use client";
 import React, { useRef, useState, useEffect } from "react";
+import { useBackgroundStore } from "@/store/backgroundStore";
+import Image from "next/image";
 
 const INIT_W = 1920;
 const INIT_H = 1080;
@@ -18,6 +20,7 @@ export default function Canvas({ children, onCanvasContextMenu }: CanvasProps) {
   const [isSpaceDown, setIsSpaceDown] = useState(false);
   const last = useRef({ x: 0, y: 0, viewBoxX: 0, viewBoxY: 0 });
   const [size, setSize] = useState({ width: INIT_W, height: INIT_H });
+  const currentBackground = useBackgroundStore(s => s.currentBackground);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -42,11 +45,12 @@ export default function Canvas({ children, onCanvasContextMenu }: CanvasProps) {
   }, []);
 
   useEffect(() => {
-    const svg = svgRef.current;
-    if (!svg) return;
     const handleWheel = (e: WheelEvent) => {
       if (!e.shiftKey) return;
       e.preventDefault();
+
+      const svg = svgRef.current;
+      if (!svg) return;
 
       const svgRect = svg.getBoundingClientRect();
       const mouseX = ((e.clientX - svgRect.left) / svgRect.width) * viewBox.w + viewBox.x;
@@ -73,8 +77,10 @@ export default function Canvas({ children, onCanvasContextMenu }: CanvasProps) {
 
       setViewBox({ x: newX, y: newY, w: newW, h: newH });
     };
-    svg.addEventListener("wheel", handleWheel, { passive: false });
-    return () => svg.removeEventListener("wheel", handleWheel);
+
+    // ✅ window에서 휠 이벤트 감지 (svg 바깥에서도 작동)
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    return () => window.removeEventListener("wheel", handleWheel);
   }, [viewBox]);
 
   const onMouseDown = (e: React.MouseEvent) => {
@@ -113,18 +119,30 @@ export default function Canvas({ children, onCanvasContextMenu }: CanvasProps) {
   return (
     <div
       style={{
-        width: "100vw",
-        height: "100vh",
-        background: "#000000",
-        overflow: "hidden",
+        width: "100dvw",
+        height: "100dvh",
         position: "fixed",
         left: 0,
         top: 0,
         zIndex: 0,
+        overflow: "hidden",
       }}
     >
+      {/* ✅ 배경 이미지 */}
+      <Image
+        src={currentBackground}
+        alt="background"
+        fill
+        style={{
+          objectFit: "cover",
+          zIndex: -1,
+        }}
+      />
+
+      {/* ✅ SVG 영역 */}
       <svg
         ref={svgRef}
+        style={{ width: "100%", height: "100%", display: "block" }}
         width={size.width}
         height={size.height}
         viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`}
@@ -135,19 +153,10 @@ export default function Canvas({ children, onCanvasContextMenu }: CanvasProps) {
         onContextMenu={onCanvasContextMenu}
         tabIndex={0}
       >
-        {/* webp 배경 이미지 삽입 */}
-        <image
-          href="/space/space.webp"
-          x={viewBox.x}
-          y={viewBox.y}
-          width={viewBox.w}
-          height={viewBox.h}
-          preserveAspectRatio="xMidYMid slice"
-          pointerEvents="none"
-        />
         {children.props.children}
       </svg>
 
+      {/* 도움말 */}
       <span
         style={{
           color: "#fff",
