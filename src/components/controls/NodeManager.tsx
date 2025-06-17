@@ -5,6 +5,8 @@ import Nodes from "@/components/nodes/nodes";
 import ContextMenu from "@/components/common/ContextMenu";
 import { useMindGraphStore } from "@/store/mindGraphStore";
 import PopupUI from "@/components/controls/popupUI";
+import { useBackgroundStore } from "@/store/backgroundStore";
+import BottomMenu from "@/components/controls/BottomMenu";
 
 type MenuState =
   | null
@@ -13,8 +15,9 @@ type MenuState =
 export default function NodeManager() {
   const nodes = useMindGraphStore(s => s.nodes);
   const addStar = useMindGraphStore(s => s.addStar);
-
+  const { setBackground } = useBackgroundStore();
   const [menu, setMenu] = useState<MenuState>(null);
+  const [showBottomMenu, setShowBottomMenu] = useState(false);
 
   const handleCanvasContextMenu = (e: React.MouseEvent<SVGSVGElement>) => {
     e.preventDefault();
@@ -31,6 +34,9 @@ export default function NodeManager() {
     if (menu.target === "canvas") {
       if (label === "별 추가") {
         addStar(menu.svgX, menu.svgY);
+        setMenu(null);
+      } else if (label === "배경 변경") {
+        setShowBottomMenu(true);
         setMenu(null);
       } else {
         setMenu(null);
@@ -58,9 +64,19 @@ export default function NodeManager() {
           y={menu.y}
           options={[
             { label: "별 추가", onClick: () => handleMenuOption("별 추가") },
+            { label: "배경 변경", onClick: () => handleMenuOption("배경 변경") },
             { label: "취소", onClick: () => setMenu(null) },
           ]}
           onClose={() => setMenu(null)}
+        />
+      )}
+      {showBottomMenu && (
+        <BottomMenu
+          onClose={() => setShowBottomMenu(false)}
+          onSelectBackground={(bgName: string) => {
+            setBackground(`/space/${bgName}.webp`);
+            setShowBottomMenu(false);
+          }}
         />
       )}
     </>
