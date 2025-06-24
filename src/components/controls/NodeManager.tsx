@@ -7,6 +7,8 @@ import { useMindGraphStore } from "@/store/mindGraphStore";
 import PopupUI from "@/components/controls/popupUI";
 import { useBackgroundStore } from "@/store/backgroundStore";
 import BottomMenu from "@/components/controls/BottomMenu";
+import Editor from "../editor/Editor";
+import NodeTree from '../tree/NodeTree';
 
 type MenuState =
   | null
@@ -46,6 +48,7 @@ export default function NodeManager() {
 
   return (
     <>
+      <NodeTree />
       <Canvas onCanvasContextMenu={handleCanvasContextMenu}>
         <svg
           width="100vw"
@@ -79,6 +82,7 @@ export default function NodeManager() {
           }}
         />
       )}
+      <Editor />
     </>
   );
 }

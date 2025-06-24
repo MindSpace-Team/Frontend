@@ -136,4 +136,14 @@ export const mindGraphActions = {
         }
       }));
     },
+
+  setNodeContent: (id: NodeId, content: string) =>
+    (set: SetState) => {
+      set((state: MindGraphState) => ({
+        nodes: {
+          ...state.nodes,
+          [id]: { ...state.nodes[id], content }
+        }
+      }));
+    },
 } as const;
