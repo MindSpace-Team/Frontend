@@ -136,6 +136,7 @@ export default function Canvas({ children, onCanvasContextMenu }: CanvasProps) {
         style={{
           objectFit: "cover",
           zIndex: -1,
+          pointerEvents: "none",
         }}
       />
 
