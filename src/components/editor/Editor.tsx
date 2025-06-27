@@ -41,7 +41,7 @@ export default function Editor() {
         onClick={() => setIsVisible(true)}
         style={{
           position: 'fixed',
-          top: '50%',
+          top: '10%',
           right: '0px',
           transform: 'translateY(-50%)',
           zIndex: 99999,
@@ -49,11 +49,9 @@ export default function Editor() {
           background: '#31323a',
           border: '1px solid #555',
           color: '#fff',
-          padding: '15px 10px',
+          padding: '15px 20px',
           borderRadius: '8px 0 0 8px',
           cursor: 'pointer',
-          writingMode: 'vertical-rl',
-          textOrientation: 'mixed',
           fontSize: '14px',
         }}
       >
