@@ -3,22 +3,19 @@ import { createPortal } from 'react-dom';
 import { useMindGraphStore } from '@/store/mindGraphStore';
 
 export default function Editor() {
-  const { selectedNodeId, nodes, setNodeContent } = useMindGraphStore();
+  const { selectedNodeId, nodes, setNodeContent, selectNode } = useMindGraphStore();
   const [content, setContent] = useState('');
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
 
   const selectedNode = selectedNodeId ? nodes[selectedNodeId] : null;
 
-  // When a new node is selected, reset visibility and fullscreen
+  // When a new node is selected, reset fullscreen
   useEffect(() => {
     if (selectedNode) {
       setContent(selectedNode.content || '');
-      setIsVisible(true);
       setIsFullScreen(false);
     }
   }, [selectedNode]);
-
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
@@ -30,35 +27,12 @@ export default function Editor() {
     }
   };
 
+  const handleClose = () => {
+    selectNode(null);
+  };
+
   if (!selectedNodeId) {
     return null;
-  }
-
-  // Render the collapsed button if the panel is not visible
-  if (!isVisible) {
-    const collapsedBtn = (
-      <button
-        onClick={() => setIsVisible(true)}
-        style={{
-          position: 'fixed',
-          top: '10%',
-          right: '0px',
-          transform: 'translateY(-50%)',
-          zIndex: 99999,
-          pointerEvents: 'auto',
-          background: '#31323a',
-          border: '1px solid #555',
-          color: '#fff',
-          padding: '15px 20px',
-          borderRadius: '8px 0 0 8px',
-          cursor: 'pointer',
-          fontSize: '14px',
-        }}
-      >
-        &lt;&lt; 열기
-      </button>
-    );
-    return typeof window !== 'undefined' ? createPortal(collapsedBtn, document.body) : null;
   }
 
   return (
@@ -85,27 +59,29 @@ export default function Editor() {
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <button
-              onClick={() => setIsVisible(false)}
+              onClick={handleClose}
               style={{
-                  background: 'none', border: 'none', color: '#bbb',
-                  cursor: 'pointer', fontSize: '24px', padding: '5px 15px',
-                  pointerEvents: 'auto', zIndex: 99999
+                background: 'none', border: 'none', color: '#bbb',
+                cursor: 'pointer', fontSize: '20px', padding: '5px 10px',
+                pointerEvents: 'auto', zIndex: 99999,
+                borderRadius: '4px',
+                transition: 'color 0.2s ease'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#ff6b6b'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#bbb'}
+            >
+              ✕
+            </button>
+            <button
+              onClick={() => setIsFullScreen(!isFullScreen)}
+              style={{
+                background: '#31323a', border: '1px solid #555', color: '#ddd',
+                borderRadius: '6px', padding: '8px 12px', cursor: 'pointer',
+                pointerEvents: 'auto', zIndex: 99999
               }}
             >
-              &gt;&gt;
+              {isFullScreen ? '창 모드' : '전체 화면'}
             </button>
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-              <button
-                onClick={() => setIsFullScreen(!isFullScreen)}
-                style={{
-                  background: '#31323a', border: '1px solid #555', color: '#ddd',
-                  borderRadius: '6px', padding: '8px 12px', cursor: 'pointer',
-                  pointerEvents: 'auto', zIndex: 99999
-                }}
-              >
-                {isFullScreen ? '창 모드' : '전체 화면'}
-              </button>
-            </div>
           </div>
           <textarea
             value={content}
