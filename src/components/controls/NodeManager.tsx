@@ -20,6 +20,7 @@ export default function NodeManager() {
   const { setBackground } = useBackgroundStore();
   const [menu, setMenu] = useState<MenuState>(null);
   const [showBottomMenu, setShowBottomMenu] = useState(false);
+  const [isMenuVisible, setIsMenuVisible] = useState(true);
 
   const handleCanvasContextMenu = (e: React.MouseEvent<SVGSVGElement>) => {
     e.preventDefault();
@@ -46,15 +47,25 @@ export default function NodeManager() {
     }
   }
 
+  const menuWidth = isMenuVisible ? 280 : 0;
+  const canvasWidth = `calc(100vw - ${menuWidth}px)`;
+  const canvasMarginLeft = `${menuWidth}px`;
+
   return (
     <>
-      <NodeTree />
+      <NodeTree onMenuStateChange={setIsMenuVisible} />
       <Canvas onCanvasContextMenu={handleCanvasContextMenu}>
         <svg
-          width="100vw"
+          width={canvasWidth}
           height="100vh"
           viewBox="0 0 1920 1080"
-          style={{ width: "100vw", height: "100vh", background: "#111926" }}
+          style={{ 
+            width: canvasWidth, 
+            height: "100vh", 
+            background: "#111926",
+            marginLeft: canvasMarginLeft,
+            transition: "width 0.3s ease-in-out, margin-left 0.3s ease-in-out"
+          }}
           onClick={() => menu && setMenu(null)}
         >
           <Nodes nodes={nodes} />
