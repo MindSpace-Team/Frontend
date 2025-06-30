@@ -31,7 +31,7 @@ export default function NodeTree({ onMenuStateChange }: NodeTreeProps) {
 
     return (
       <div key={node.id} style={{ marginLeft: `${depth * 15}px`, padding: '3px 0' }}>
-        <span>{node.type.charAt(0).toUpperCase()}{node.type.slice(1)} {node.id}</span>
+        <span>{node.name}</span>
         {node.children.map(childId => renderNode(childId, depth + 1))}
       </div>
     );
