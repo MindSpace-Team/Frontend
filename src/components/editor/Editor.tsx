@@ -6,16 +6,27 @@ export default function Editor() {
   const { selectedNodeId, nodes, setNodeContent, selectNode } = useMindGraphStore();
   const [content, setContent] = useState('');
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [fullScreenStep, setFullScreenStep] = useState<0 | 1 | 2>(0); // 0: normal, 1: left만 이동, 2: width 확장
 
   const selectedNode = selectedNodeId ? nodes[selectedNodeId] : null;
 
-  // When a new node is selected, reset fullscreen
   useEffect(() => {
     if (selectedNode) {
       setContent(selectedNode.content || '');
       setIsFullScreen(false);
+      setFullScreenStep(0);
     }
   }, [selectedNode]);
+
+  useEffect(() => {
+    if (isFullScreen) {
+      setFullScreenStep(1);
+      const timer = setTimeout(() => setFullScreenStep(2), 60); // left 이동 후 width 확장
+      return () => clearTimeout(timer);
+    } else {
+      setFullScreenStep(0);
+    }
+  }, [isFullScreen]);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
@@ -43,8 +54,7 @@ export default function Editor() {
             position: 'fixed',
             top: 0,
             right: 0,
-            left: isFullScreen ? '240px' : undefined,
-            width: isFullScreen ? 'auto' : '40%',
+            width: isFullScreen ? 'calc(100vw - 280px)' : '40%',
             height: '100%',
             backgroundColor: '#26272d',
             boxShadow: '-2px 0 5px rgba(0,0,0,0.5)',
@@ -54,7 +64,9 @@ export default function Editor() {
             display: 'flex',
             flexDirection: 'column',
             padding: '20px',
-            transition: 'width 0.3s ease-in-out, left 0.3s ease-in-out',
+            overflow: 'hidden',
+            willChange: 'width',
+            transition: 'width 0.5s cubic-bezier(0.4,0,0.2,1)',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
