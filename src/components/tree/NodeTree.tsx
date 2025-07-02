@@ -10,7 +10,7 @@ interface NodeTreeProps {
 export default function NodeTree({ onMenuStateChange }: NodeTreeProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [activeSection, setActiveSection] = useState<'tree' | 'user'>('tree');
-  const { nodes, rootIds } = useMindGraphStore();
+  const { nodes, rootIds, selectNode } = useMindGraphStore();
 
   // 임시 로그인 상태 (나중에 실제 인증 상태로 교체)
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -31,7 +31,12 @@ export default function NodeTree({ onMenuStateChange }: NodeTreeProps) {
 
     return (
       <div key={node.id} style={{ marginLeft: `${depth * 15}px`, padding: '3px 0' }}>
-        <span>{node.name}</span>
+        <span onClick={() => selectNode(node.id)} style={{ cursor: 'pointer' }}>
+          {node.type === 'star' && '⭐ '}
+          {node.type === 'planet' && '🪐 '}
+          {node.type === 'satellite' && '🛰️ '}
+          {node.name}
+        </span>
         {node.children.map(childId => renderNode(childId, depth + 1))}
       </div>
     );

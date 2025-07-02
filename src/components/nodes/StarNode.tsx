@@ -24,7 +24,6 @@ export default function StarNode({ star, nodes, onContextMenu }: Props) {
     <>
       <MoveNode
         node={star}
-        onClick={() => selectNode(star.id)}
         onContextMenu={e => {
           e.preventDefault();
           e.stopPropagation();

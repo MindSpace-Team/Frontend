@@ -37,7 +37,6 @@ export default function PlanetNode({ planet, nodes, planetIdx, orbitRadius, star
       color={planet.color}
       initialAngle={planet.initialAngle ?? Math.random() * Math.PI * 2}
       paused={isPaused(planet.id)}
-      onClick={() => selectNode(planet.id)}
       onContextMenu={(x, y, e) => {
         e.preventDefault();
         e.stopPropagation();

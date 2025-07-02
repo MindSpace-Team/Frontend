@@ -60,7 +60,6 @@ export default function SatelliteNode({ satId, satIdx, nodes, centerX, centerY }
       color={satellite.color}
       initialAngle={satellite.initialAngle ?? Math.random() * Math.PI * 2}
       paused={isPaused(satId)}
-      onClick={() => selectNode(satId)}
       onContextMenu={(x, y, e) => {
         e.preventDefault();
         e.stopPropagation();

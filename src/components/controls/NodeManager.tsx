@@ -23,6 +23,7 @@ export default function NodeManager() {
   const [menu, setMenu] = useState<MenuState>(null);
   const [showBottomMenu, setShowBottomMenu] = useState(false);
   const [isMenuVisible, setIsMenuVisible] = useState(true);
+  const { selectNode } = useMindGraphStore();
 
   const handleCanvasContextMenu = (e: React.MouseEvent<SVGSVGElement>) => {
     e.preventDefault();
@@ -69,7 +70,6 @@ export default function NodeManager() {
             marginLeft: canvasMarginLeft,
             transition: "width 0.3s ease-in-out, margin-left 0.3s ease-in-out"
           }}
-          onClick={() => menu && setMenu(null)}
         >
           <Nodes nodes={nodes} />
           <PopupUI />
