@@ -9,6 +9,7 @@ type OrbitNodeProps = {
   color: string;
   initialAngle?: number;
   paused?: boolean;
+  onClick?: (e: React.MouseEvent<SVGCircleElement, MouseEvent>) => void;
   onContextMenu?: (x: number, y: number, e: React.MouseEvent<SVGCircleElement, MouseEvent>) => void;
   children?: ((x: number, y: number) => ReactNode) | ReactNode;
 };
@@ -22,6 +23,7 @@ export default function OrbitNode({
   color,
   initialAngle = 0,
   paused = false,
+  onClick,
   onContextMenu,
   children,
 }: OrbitNodeProps) {
@@ -52,6 +54,7 @@ export default function OrbitNode({
         cy={y}
         r={size}
         fill={color}
+        onClick={onClick}
         onContextMenu={onContextMenu ? (e) => onContextMenu(x, y, e) : undefined}
         style={{ cursor: "pointer" }}
       />

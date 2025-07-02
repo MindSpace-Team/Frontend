@@ -2,6 +2,7 @@ import React from "react";
 import { MindNode } from "@/types/mind-graph";
 import OrbitNode from "@/components/controls/Orbit";
 import { usePopupStore } from "@/store/popupStore";
+import { useMindGraphStore } from "@/store/mindGraphStore";
 import { findRootId } from "./utils";
 
 const satBaseSpeed = 0.7;
@@ -20,6 +21,7 @@ interface Props {
 export default function SatelliteNode({ satId, satIdx, nodes, centerX, centerY }: Props) {
   const setPopup = usePopupStore(s => s.setPopup);
   const pausedRootIds = usePopupStore(s => s.pausedRootIds);
+  const selectNode = useMindGraphStore(s => s.selectNode);
   const satellite = nodes[satId];
   const isPaused = (nodeId: number) => pausedRootIds.has(findRootId(nodeId, nodes));
 

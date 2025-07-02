@@ -3,6 +3,7 @@ import { MindNode } from "@/types/mind-graph";
 import OrbitNode from "@/components/controls/Orbit";
 import SatelliteNode from "./SatelliteNode";
 import { usePopupStore } from "@/store/popupStore";
+import { useMindGraphStore } from "@/store/mindGraphStore";
 import { findRootId } from "./utils";
 
 const planetBaseSpeed = 0.3;
@@ -20,6 +21,7 @@ interface Props {
 export default function PlanetNode({ planet, nodes, planetIdx, orbitRadius, starX, starY }: Props) {
   const setPopup = usePopupStore(s => s.setPopup);
   const pausedRootIds = usePopupStore(s => s.pausedRootIds);
+  const selectNode = useMindGraphStore(s => s.selectNode);
 
   const isPaused = (nodeId: number) => pausedRootIds.has(findRootId(nodeId, nodes));
   const speed = planetBaseSpeed * Math.pow(planetDecay, planetIdx);

@@ -6,9 +6,9 @@ export default function Header() {
   const [active, setActive] = useState<string | null>(null);
 
   return (
-    <header className="fixed top-0 inset-x-0 z-50 flex flex-col items-center bg-transparent mt-8">
+    <header className="fixed top-0 left-0 right-0 z-50 flex flex-col items-center bg-transparent mt-8 px-4 pointer-events-none">
       {/* 메뉴 그룹 */}
-      <nav className="w-full flex justify-center">
+      <nav className="w-full max-w-4xl flex justify-center pointer-events-auto" style={{margin: '0 auto'}}>
         <Menu setActive={setActive}>
           <HoveredLink href="/">Home</HoveredLink>
           <MenuItem setActive={setActive} active={active} item="Canvas">

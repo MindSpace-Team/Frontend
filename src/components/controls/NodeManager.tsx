@@ -4,9 +4,13 @@ import Canvas from "@/components/canvas/Canvas";
 import Nodes from "@/components/nodes/nodes";
 import ContextMenu from "@/components/common/ContextMenu";
 import { useMindGraphStore } from "@/store/mindGraphStore";
+import { useNameInputStore } from "@/store/nameInputStore";
+import NameInputModal from "@/components/common/NameInputModal";
 import PopupUI from "@/components/controls/popupUI";
 import { useBackgroundStore } from "@/store/backgroundStore";
 import BottomMenu from "@/components/controls/BottomMenu";
+import Editor from "../editor/Editor";
+import NodeTree from '../tree/NodeTree';
 
 type MenuState =
   | null
@@ -14,10 +18,12 @@ type MenuState =
 
 export default function NodeManager() {
   const nodes = useMindGraphStore(s => s.nodes);
-  const addStar = useMindGraphStore(s => s.addStar);
+  const { openNameInput } = useNameInputStore();
   const { setBackground } = useBackgroundStore();
   const [menu, setMenu] = useState<MenuState>(null);
   const [showBottomMenu, setShowBottomMenu] = useState(false);
+  const [isMenuVisible, setIsMenuVisible] = useState(true);
+  const { selectNode } = useMindGraphStore();
 
   const handleCanvasContextMenu = (e: React.MouseEvent<SVGSVGElement>) => {
     e.preventDefault();
@@ -33,7 +39,7 @@ export default function NodeManager() {
     if (!menu) return;
     if (menu.target === "canvas") {
       if (label === "별 추가") {
-        addStar(menu.svgX, menu.svgY);
+        openNameInput({ type: "star", x: menu.svgX, y: menu.svgY });
         setMenu(null);
       } else if (label === "배경 변경") {
         setShowBottomMenu(true);
@@ -44,15 +50,26 @@ export default function NodeManager() {
     }
   }
 
+  const menuWidth = isMenuVisible ? 280 : 0;
+  const canvasWidth = `calc(100vw - ${menuWidth}px)`;
+  const canvasMarginLeft = `${menuWidth}px`;
+
   return (
     <>
+      <NameInputModal />
+      <NodeTree onMenuStateChange={setIsMenuVisible} />
       <Canvas onCanvasContextMenu={handleCanvasContextMenu}>
         <svg
-          width="100vw"
+          width={canvasWidth}
           height="100vh"
           viewBox="0 0 1920 1080"
-          style={{ width: "100vw", height: "100vh", background: "#111926" }}
-          onClick={() => menu && setMenu(null)}
+          style={{ 
+            width: canvasWidth, 
+            height: "100vh", 
+            background: "#111926",
+            marginLeft: canvasMarginLeft,
+            transition: "width 0.3s ease-in-out, margin-left 0.3s ease-in-out"
+          }}
         >
           <Nodes nodes={nodes} />
           <PopupUI />
@@ -79,6 +96,7 @@ export default function NodeManager() {
           }}
         />
       )}
+      <Editor />
     </>
   );
 }

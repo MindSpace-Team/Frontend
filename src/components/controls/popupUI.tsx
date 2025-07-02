@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { usePopupStore } from "@/store/popupStore";
 import { useMindGraphStore } from "@/store/mindGraphStore";
+import { useNameInputStore } from "@/store/nameInputStore";
 
 export default function PopupUI() {
   const { popup, setPopup, pausedRootIds, togglePauseRoot } = usePopupStore();
@@ -12,7 +13,9 @@ export default function PopupUI() {
     removeNode,
     setNodeColor,
     setNodeRadius,
+    selectNode,
   } = useMindGraphStore();
+  const { openNameInput } = useNameInputStore();
 
   const [subPopup, setSubPopup] = useState<null | "color" | "size">(null);
   const [color, setColor] = useState("#000");
@@ -87,6 +90,17 @@ export default function PopupUI() {
       }}
     >
       <button
+        onClick={() => {
+          selectNode(node.id);
+          setPopup(null);
+        }}
+        style={{
+          border: "none", borderRadius: 8,
+          padding: "8px 16px", background: "#2a5a8a",
+          color: "#fff", fontWeight: 700, fontSize: 15, cursor: "pointer",
+        }}
+      >글쓰기</button>
+      <button
         onClick={() => setSubPopup("color")}
         style={{
           border: "none", borderRadius: 8,
@@ -117,7 +131,7 @@ export default function PopupUI() {
       {node.type === "star" && (
         <button
           onClick={() => {
-            addPlanet(node.id);
+            openNameInput({ type: 'planet', parentId: node.id });
             setPopup(null);
           }}
           style={{
@@ -130,7 +144,7 @@ export default function PopupUI() {
       {node.type === "planet" && (
         <button
           onClick={() => {
-            addSatellite(node.id);
+            openNameInput({ type: 'satellite', parentId: node.id });
             setPopup(null);
           }}
           style={{

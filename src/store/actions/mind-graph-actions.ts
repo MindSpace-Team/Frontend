@@ -6,7 +6,7 @@ import { StoreApi } from 'zustand';
 type SetState = StoreApi<MindGraphState>['setState'];
 
 export const mindGraphActions = {
-  addStar: (x: number, y: number) =>
+  addStar: (x: number, y: number, name: string) =>
     (set: SetState) => {
       set((state: MindGraphState) => {
         const id = newId();
@@ -15,6 +15,7 @@ export const mindGraphActions = {
             ...state.nodes,
             [id]: {
               id,
+              name,
               type: "star",
               x,
               y,
@@ -28,7 +29,7 @@ export const mindGraphActions = {
       });
     },
 
-  addPlanet: (parentId: NodeId) =>
+  addPlanet: (parentId: NodeId, name: string) =>
     (set: SetState) => {
       set((state: MindGraphState) => {
         const parent = state.nodes[parentId];
@@ -36,6 +37,7 @@ export const mindGraphActions = {
         const id = newId();
         const planet: MindNode = {
           id,
+          name,
           type: "planet",
           parentId,
           radius: NODE_DEFAULTS.PLANET.radius,
@@ -57,7 +59,7 @@ export const mindGraphActions = {
       });
     },
 
-  addSatellite: (parentId: NodeId) =>
+  addSatellite: (parentId: NodeId, name: string) =>
     (set: SetState) => {
       set((state: MindGraphState) => {
         const parent = state.nodes[parentId];
@@ -65,6 +67,7 @@ export const mindGraphActions = {
         const id = newId();
         const satellite: MindNode = {
           id,
+          name,
           type: "satellite",
           parentId,
           radius: NODE_DEFAULTS.SATELLITE.radius,
@@ -133,6 +136,16 @@ export const mindGraphActions = {
         nodes: {
           ...state.nodes,
           [id]: { ...state.nodes[id], radius }
+        }
+      }));
+    },
+
+  setNodeContent: (id: NodeId, content: string) =>
+    (set: SetState) => {
+      set((state: MindGraphState) => ({
+        nodes: {
+          ...state.nodes,
+          [id]: { ...state.nodes[id], content }
         }
       }));
     },
