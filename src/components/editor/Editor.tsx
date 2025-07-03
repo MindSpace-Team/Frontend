@@ -2,31 +2,27 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useMindGraphStore } from '@/store/mindGraphStore';
 
-export default function Editor() {
+export default function Editor({ isMenuVisible = true }: { isMenuVisible?: boolean }) {
   const { selectedNodeId, nodes, setNodeContent, selectNode } = useMindGraphStore();
   const [content, setContent] = useState('');
+  const [visible, setVisible] = useState(false);
+  const [closing, setClosing] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const [fullScreenStep, setFullScreenStep] = useState<0 | 1 | 2>(0); // 0: normal, 1: left만 이동, 2: width 확장
 
   const selectedNode = selectedNodeId ? nodes[selectedNodeId] : null;
 
   useEffect(() => {
     if (selectedNode) {
       setContent(selectedNode.content || '');
+      setVisible(true);
+      setClosing(false);
       setIsFullScreen(false);
-      setFullScreenStep(0);
+    } else {
+      setVisible(false);
+      setClosing(false);
+      setIsFullScreen(false);
     }
   }, [selectedNode]);
-
-  useEffect(() => {
-    if (isFullScreen) {
-      setFullScreenStep(1);
-      const timer = setTimeout(() => setFullScreenStep(2), 60); // left 이동 후 width 확장
-      return () => clearTimeout(timer);
-    } else {
-      setFullScreenStep(0);
-    }
-  }, [isFullScreen]);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
@@ -39,10 +35,14 @@ export default function Editor() {
   };
 
   const handleClose = () => {
-    selectNode(null);
+    setClosing(true);
+    setTimeout(() => {
+      setVisible(false);
+      selectNode(null);
+    }, 400); // 애니메이션 시간과 맞춤
   };
 
-  if (!selectedNodeId) {
+  if (!selectedNodeId && !visible) {
     return null;
   }
 
@@ -54,7 +54,11 @@ export default function Editor() {
             position: 'fixed',
             top: 0,
             right: 0,
-            width: isFullScreen ? 'calc(100vw - 280px)' : '40%',
+            width: isFullScreen
+              ? (isMenuVisible ? 'calc(100vw - 280px)' : '100vw')
+              : '50vw',
+            maxWidth: isFullScreen ? (isMenuVisible ? 'calc(100vw - 280px)' : '100vw') : 700,
+            minWidth: 320,
             height: '100%',
             backgroundColor: '#26272d',
             boxShadow: '-2px 0 5px rgba(0,0,0,0.5)',
@@ -65,8 +69,9 @@ export default function Editor() {
             flexDirection: 'column',
             padding: '20px',
             overflow: 'hidden',
-            willChange: 'width',
-            transition: 'width 0.5s cubic-bezier(0.4,0,0.2,1)',
+            willChange: 'transform,width',
+            transition: 'transform 0.4s cubic-bezier(0.4,0,0.2,1), width 0.4s cubic-bezier(0.4,0,0.2,1)',
+            transform: visible && !closing ? 'translateX(0)' : 'translateX(100%)',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -79,13 +84,13 @@ export default function Editor() {
                 borderRadius: '4px',
                 transition: 'color 0.2s ease'
               }}
-              onMouseEnter={(e) => e.currentTarget.style.color = '#ff6b6b'}
-              onMouseLeave={(e) => e.currentTarget.style.color = '#bbb'}
+              onMouseEnter={e => e.currentTarget.style.color = '#ff6b6b'}
+              onMouseLeave={e => e.currentTarget.style.color = '#bbb'}
             >
               ✕
             </button>
             <button
-              onClick={() => setIsFullScreen(!isFullScreen)}
+              onClick={() => setIsFullScreen(f => !f)}
               style={{
                 background: '#31323a', border: '1px solid #555', color: '#ddd',
                 borderRadius: '6px', padding: '8px 12px', cursor: 'pointer',
