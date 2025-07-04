@@ -118,7 +118,7 @@ export default function Editor({ isMenuVisible = true }: { isMenuVisible?: boole
               pointerEvents: 'auto',
               zIndex: 99999
             }}
-            placeholder="여기에 마크다운을 입력하세요..."
+            placeholder="내용을 입력하세요..."
           />
         </div>,
         document.body
