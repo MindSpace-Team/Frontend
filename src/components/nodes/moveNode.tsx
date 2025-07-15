@@ -73,18 +73,46 @@ export default function MoveNode({ node, onClick, onContextMenu, onFocusNode }: 
   };
 
   return (
-    <circle
-      ref={ref}
-      cx={node.x}
-      cy={node.y}
-      r={node.radius}
-      fill={node.color}
-      stroke="#fff"
-      strokeWidth={3}
-      onMouseDown={onMouseDown}
-      onClick={handleClick}
-      onContextMenu={onContextMenu}
-      style={{ cursor: dragging ? "grabbing" : "grab" }}
-    />
+    <g>
+      {/* Glow 효과 */}
+      <circle
+        ref={ref}
+        cx={node.x}
+        cy={node.y}
+        r={node.radius * 1.5}
+        fill={node.color}
+        opacity={0.25}
+        filter="blur(6px)"
+        style={{ pointerEvents: "none" }}
+      />
+      {/* 별 본체 */}
+      <circle
+        ref={ref}
+        cx={node.x}
+        cy={node.y}
+        r={node.radius}
+        fill={`url(#star-gradient-${node.id})`}
+        onMouseDown={onMouseDown}
+        onClick={handleClick}
+        onContextMenu={onContextMenu}
+        style={{ cursor: dragging ? "grabbing" : "grab" }}
+      />
+      {/* 반짝임 효과 (작은 흰 점) */}
+      <circle
+        cx={node.x + node.radius * 0.5}
+        cy={node.y - node.radius * 0.3}
+        r={node.radius * 0.13}
+        fill="#fff"
+        opacity={0.7}
+        style={{ pointerEvents: "none" }}
+      />
+      <defs>
+        <radialGradient id={`star-gradient-${node.id}`}>
+          <stop offset="0%" stopColor="#fffbe7" />
+          <stop offset="60%" stopColor={node.color} />
+          <stop offset="100%" stopColor="#0000" />
+        </radialGradient>
+      </defs>
+    </g>
   );
 }

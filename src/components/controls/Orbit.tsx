@@ -70,11 +70,12 @@ export default function OrbitNode({
 
   return (
     <>
+      {/* 행성: size>15, 위성: size<=15 */}
       <circle
         cx={x}
         cy={y}
         r={size}
-        fill={color}
+        fill={`url(#planet-gradient-${centerX}-${centerY}-${radius}-${size})`}
         onClick={onClick}
         onContextMenu={onContextMenu ? (e) => onContextMenu(x, y, e) : undefined}
         onMouseDown={e => {
@@ -83,6 +84,13 @@ export default function OrbitNode({
         }}
         style={{ cursor: "pointer" }}
       />
+      <defs>
+        <radialGradient id={`planet-gradient-${centerX}-${centerY}-${radius}-${size}`}>
+          <stop offset="0%" stopColor={size > 15 ? color : '#eee'} stopOpacity="1"/>
+          <stop offset="60%" stopColor={size > 15 ? color : '#bbb'} stopOpacity="1"/>
+          <stop offset="100%" stopColor={size > 15 ? '#222' : '#888'} stopOpacity="1"/>
+        </radialGradient>
+      </defs>
       {typeof children === "function" ? children(x, y) : children}
     </>
   );
