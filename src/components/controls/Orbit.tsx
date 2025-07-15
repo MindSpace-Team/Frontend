@@ -11,7 +11,8 @@ type OrbitNodeProps = {
   paused?: boolean;
   onClick?: (e: React.MouseEvent<SVGCircleElement, MouseEvent>) => void;
   onContextMenu?: (x: number, y: number, e: React.MouseEvent<SVGCircleElement, MouseEvent>) => void;
-  children?: ((x: number, y: number) => ReactNode) | ReactNode;
+  onFocusNode?: (x: number, y: number) => void;
+  children?: ((x: number, y: number) => React.ReactNode) | React.ReactNode;
 };
 
 export default function OrbitNode({
@@ -25,9 +26,13 @@ export default function OrbitNode({
   paused = false,
   onClick,
   onContextMenu,
+  onFocusNode,
   children,
 }: OrbitNodeProps) {
   const [angle, setAngle] = useState(initialAngle);
+  const startPos = React.useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [dragging, setDragging] = useState(false);
+  const xyRef = React.useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   useEffect(() => {
     if (paused) return;
@@ -46,6 +51,22 @@ export default function OrbitNode({
 
   const x = centerX + radius * Math.cos(angle);
   const y = centerY + radius * Math.sin(angle);
+  xyRef.current = { x, y };
+
+  React.useEffect(() => {
+    if (!dragging) return;
+    const onMouseUp = (e: MouseEvent) => {
+      setDragging(false);
+      const dx = e.clientX - startPos.current.x;
+      const dy = e.clientY - startPos.current.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist <= 5 && onFocusNode) {
+        onFocusNode(xyRef.current.x, xyRef.current.y);
+      }
+    };
+    window.addEventListener("mouseup", onMouseUp);
+    return () => window.removeEventListener("mouseup", onMouseUp);
+  }, [dragging, onFocusNode]);
 
   return (
     <>
@@ -56,6 +77,10 @@ export default function OrbitNode({
         fill={color}
         onClick={onClick}
         onContextMenu={onContextMenu ? (e) => onContextMenu(x, y, e) : undefined}
+        onMouseDown={e => {
+          setDragging(true);
+          startPos.current = { x: e.clientX, y: e.clientY };
+        }}
         style={{ cursor: "pointer" }}
       />
       {typeof children === "function" ? children(x, y) : children}

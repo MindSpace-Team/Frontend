@@ -5,14 +5,16 @@ type MoveNodeProps = {
   node: { id: number; x: number; y: number; radius: number; color: string };
   onClick?: (e: React.MouseEvent<SVGCircleElement, MouseEvent>) => void;
   onContextMenu?: (e: React.MouseEvent<SVGCircleElement, MouseEvent>) => void;
+  onFocusNode?: (x: number, y: number) => void;
 };
 
-export default function MoveNode({ node, onClick, onContextMenu }: MoveNodeProps) {
+export default function MoveNode({ node, onClick, onContextMenu, onFocusNode }: MoveNodeProps) {
   const moveStar = useMindGraphStore(s => s.moveStar);
   const [dragging, setDragging] = useState(false);
   const [moved, setMoved] = useState(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const ref = useRef<SVGCircleElement>(null);
+  const startPos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   const getSVGCoords = (e: { clientX: number; clientY: number }) => {
     const svg = ref.current?.ownerSVGElement;
@@ -34,6 +36,7 @@ export default function MoveNode({ node, onClick, onContextMenu }: MoveNodeProps
     setOffset({ x: x - node.x, y: y - node.y });
     setDragging(true);
     setMoved(false);
+    startPos.current = { x: e.clientX, y: e.clientY };
   };
 
   React.useEffect(() => {
@@ -43,7 +46,16 @@ export default function MoveNode({ node, onClick, onContextMenu }: MoveNodeProps
       const { x, y } = getSVGCoords(e);
       moveStar(node.id, x - offset.x, y - offset.y);
     };
-    const onMouseUp = () => setDragging(false);
+    const onMouseUp = (e: MouseEvent) => {
+      setDragging(false);
+      // 클릭(이동량 5px 이하)이면 중심이동/줌리셋
+      const dx = e.clientX - startPos.current.x;
+      const dy = e.clientY - startPos.current.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist <= 5 && onFocusNode) {
+        onFocusNode(node.x, node.y);
+      }
+    };
 
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseup", onMouseUp);
@@ -51,7 +63,7 @@ export default function MoveNode({ node, onClick, onContextMenu }: MoveNodeProps
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseup", onMouseUp);
     };
-  }, [dragging, offset, node.id, moveStar]);
+  }, [dragging, offset, node.id, moveStar, onFocusNode, node.x, node.y]);
 
   const handleClick = (e: React.MouseEvent<SVGCircleElement, MouseEvent>) => {
     if (moved) return;

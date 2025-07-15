@@ -16,9 +16,10 @@ interface Props {
   orbitRadius: number;
   starX: number;
   starY: number;
+  onFocusNode?: (x: number, y: number) => void;
 }
 
-export default function PlanetNode({ planet, nodes, planetIdx, orbitRadius, starX, starY }: Props) {
+export default function PlanetNode({ planet, nodes, planetIdx, orbitRadius, starX, starY, onFocusNode }: Props) {
   const setPopup = usePopupStore(s => s.setPopup);
   const pausedRootIds = usePopupStore(s => s.pausedRootIds);
   const selectNode = useMindGraphStore(s => s.selectNode);
@@ -42,6 +43,7 @@ export default function PlanetNode({ planet, nodes, planetIdx, orbitRadius, star
         e.stopPropagation();
         setPopup({ id: planet.id, x, y });
       }}
+      onFocusNode={onFocusNode}
     >
       {(x, y) => planet.children.map((satId, idx) => (
         <SatelliteNode
@@ -51,6 +53,7 @@ export default function PlanetNode({ planet, nodes, planetIdx, orbitRadius, star
           nodes={nodes}
           centerX={x}
           centerY={y}
+          onFocusNode={onFocusNode}
         />
       ))}
     </OrbitNode>

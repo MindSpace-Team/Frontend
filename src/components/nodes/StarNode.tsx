@@ -12,9 +12,10 @@ interface Props {
   star: MindNode & { x: number; y: number };
   nodes: { [id: number]: MindNode };
   onContextMenu?: (e: React.MouseEvent, nodeId: string) => void;
+  onFocusNode?: (x: number, y: number) => void;
 }
 
-export default function StarNode({ star, nodes, onContextMenu }: Props) {
+export default function StarNode({ star, nodes, onContextMenu, onFocusNode }: Props) {
   const setPopup = usePopupStore(s => s.setPopup);
   const selectNode = useMindGraphStore(s => s.selectNode);
   const planetIds = star.children;
@@ -33,6 +34,7 @@ export default function StarNode({ star, nodes, onContextMenu }: Props) {
             setPopup({ id: star.id, x: star.x, y: star.y });
           }
         }}
+        onFocusNode={onFocusNode}
       />
 
       {planetIds.map((planetId, idx) => {
@@ -55,6 +57,7 @@ export default function StarNode({ star, nodes, onContextMenu }: Props) {
             orbitRadius={planetAccRadius}
             starX={star.x}
             starY={star.y}
+            onFocusNode={onFocusNode}
           />
         );
       })}
