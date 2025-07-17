@@ -8,22 +8,43 @@ type MoveNodeProps = {
   onFocusNode?: (x: number, y: number) => void;
 };
 
-// node.color에서 밝은색/중간색/어두운색 파생
-function colorLerp(hex: string, amt: number) {
-  // hex: #rrggbb, amt: -1~1 (음수면 어둡게, 양수면 밝게)
+// node.color에서 밝은색/중간색/어두운색 파생 + hue shift
+function colorLerp(hex: string, amt: number, hueShift: number = 0) {
+  // hex: #rrggbb, amt: -1~1 (음수면 어둡게, 양수면 밝게), hueShift: degree
   let [r, g, b] = hex.replace('#', '').match(/.{2}/g)!.map(x => parseInt(x, 16));
-  if (amt > 0) {
-    r += (255 - r) * amt;
-    g += (255 - g) * amt;
-    b += (255 - b) * amt;
-  } else {
-    r *= 1 + amt;
-    g *= 1 + amt;
-    b *= 1 + amt;
+  // rgb -> hsl
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h = 0, s = 0, l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h /= 6;
   }
-  r = Math.round(Math.max(0, Math.min(255, r)));
-  g = Math.round(Math.max(0, Math.min(255, g)));
-  b = Math.round(Math.max(0, Math.min(255, b)));
+  // 밝기 조정
+  l = Math.max(0, Math.min(1, l + amt));
+  // hue shift
+  h = (h + hueShift / 360) % 1;
+  if (h < 0) h += 1;
+  // hsl -> rgb
+  let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  let p = 2 * l - q;
+  function h2rgb(p: number, q: number, t: number) {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1/6) return p + (q - p) * 6 * t;
+    if (t < 1/2) return q;
+    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+    return p;
+  }
+  r = Math.round(h2rgb(p, q, h + 1/3) * 255);
+  g = Math.round(h2rgb(p, q, h) * 255);
+  b = Math.round(h2rgb(p, q, h - 1/3) * 255);
   return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 }
 
@@ -149,7 +170,8 @@ export default function MoveNode({ node, onClick, onContextMenu, onFocusNode }: 
         <radialGradient id={`star-glow-${node.id}`}>
           <stop offset="0%" stopColor={colorLerp(node.color, 0.7)} stopOpacity="0.7" />
           <stop offset="97%" stopColor={node.color} stopOpacity="0.09" />
-          <stop offset="100%" stopColor={colorLerp(node.color, -0.3)} stopOpacity="0" />
+          {/* 끝부분: node.color보다 더 진하고 hue를 -25도(노랑→주황, 주황→빨강) shift */}
+          <stop offset="100%" stopColor={colorLerp(node.color, -0.32, -25)} stopOpacity="0" />
         </radialGradient>
         <filter id={`lava-filter-${node.id}`} x="-40%" y="-40%" width="180%" height="180%">
           <feTurbulence type="turbulence" baseFrequency={`${baseFreqX * 1.1} ${baseFreqY * 1.1}`} numOctaves="3" seed={node.id} result="turb" />
