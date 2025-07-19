@@ -24,6 +24,42 @@ export default function PlanetNode({ planet, nodes, planetIdx, orbitRadius, star
   const pausedRootIds = usePopupStore(s => s.pausedRootIds);
   const selectNode = useMindGraphStore(s => s.selectNode);
 
+  // colorLerp: hex 색상 보간 및 hue shift (ringed/earth 등에서 공통 사용)
+  function colorLerp(hex: string, amt: number, hueShift: number = 0) {
+    hex = hex && /^#[0-9a-fA-F]{6}$/.test(hex) ? hex : '#e6c07b';
+    let [r, g, b] = hex.replace('#', '').match(/.{2}/g)!.map(x => parseInt(x, 16));
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h = 0, s = 0, l = (max + min) / 2;
+    if (max !== min) {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+        case g: h = (b - r) / d + 2; break;
+        case b: h = (r - g) / d + 4; break;
+      }
+      h /= 6;
+    }
+    l = Math.max(0, Math.min(1, l + amt));
+    h = (h + hueShift / 360) % 1;
+    if (h < 0) h += 1;
+    let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    let p = 2 * l - q;
+    function h2rgb(p: number, q: number, t: number) {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1/6) return p + (q - p) * 6 * t;
+      if (t < 1/2) return q;
+      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      return p;
+    }
+    r = Math.round(h2rgb(p, q, h + 1/3) * 255);
+    g = Math.round(h2rgb(p, q, h) * 255);
+    b = Math.round(h2rgb(p, q, h - 1/3) * 255);
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+  }
+
   const isPaused = (nodeId: number) => pausedRootIds.has(findRootId(nodeId, nodes));
   const speed = planetBaseSpeed * Math.pow(planetDecay, planetIdx);
 
@@ -134,32 +170,34 @@ export default function PlanetNode({ planet, nodes, planetIdx, orbitRadius, star
                 );
               }
               case 'ringed':
-                // 고리형: 입체 그라데이션, 줄무늬, 고리(입체감), 대기 글로우
+                // 고리형: 입체 그라데이션, 줄무늬, 고리(입체감), 대기 글로우, 색상은 planet.color 기반
+                const baseColor = planet.color && /^#[0-9a-fA-F]{6}$/.test(planet.color) ? planet.color : '#e6c07b';
                 return (
                   <g pointerEvents="none">
                     {/* 대기 글로우 */}
-                    <ellipse cx={x} cy={y} rx={planet.radius * 1.13} ry={planet.radius * 1.08} fill="#ffe7b3" opacity="0.18" filter="blur(2.5px)" />
+                    <ellipse cx={x} cy={y} rx={planet.radius * 1.13} ry={planet.radius * 1.08} fill={colorLerp(baseColor, 0.3)} opacity="0.18" filter="blur(2.5px)" />
                     {/* 고리(입체감) */}
-                    <ellipse cx={x} cy={y+planet.radius*0.13} rx={planet.radius*1.55} ry={planet.radius*0.48} fill="#e6c07b" opacity="0.22" filter="blur(0.5px)" />
-                    <ellipse cx={x} cy={y+planet.radius*0.13} rx={planet.radius*1.4} ry={planet.radius*0.43} fill="none" stroke="#e6c07b" strokeWidth={planet.radius*0.13} opacity="0.55" />
+                    <ellipse cx={x} cy={y+planet.radius*0.13} rx={planet.radius*1.55} ry={planet.radius*0.48} fill={colorLerp(baseColor, 0.2)} opacity="0.22" filter="blur(0.5px)" />
+                    <ellipse cx={x} cy={y+planet.radius*0.13} rx={planet.radius*1.4} ry={planet.radius*0.43} fill="none" stroke={colorLerp(baseColor, 0.1)} strokeWidth={planet.radius*0.13} opacity="0.55" />
                     {/* 본체 */}
                     <defs>
                       <radialGradient id={gradId} cx="60%" cy="38%" r="70%">
-                        <stop offset="0%" stopColor="#fff2c7" />
-                        <stop offset="60%" stopColor="#e6c07b" />
-                        <stop offset="100%" stopColor="#b88f4a" />
+                        <stop offset="0%" stopColor={colorLerp(baseColor, 0.5)} />
+                        <stop offset="60%" stopColor={colorLerp(baseColor, 0.1)} />
+                        <stop offset="100%" stopColor={colorLerp(baseColor, -0.25)} />
                       </radialGradient>
                     </defs>
                     <circle cx={x} cy={y} r={planet.radius} fill={`url(#${gradId})`} />
                     {/* 줄무늬 */}
-                    <ellipse cx={x} cy={y+planet.radius*0.25} rx={planet.radius*0.95} ry={planet.radius*0.13} fill="#fff" opacity="0.18" />
-                    <ellipse cx={x} cy={y-planet.radius*0.18} rx={planet.radius*0.7} ry={planet.radius*0.09} fill="#fff" opacity="0.13" />
-                    <ellipse cx={x} cy={y+planet.radius*0.05} rx={planet.radius*0.8} ry={planet.radius*0.07} fill="#fff" opacity="0.09" />
+                    <ellipse cx={x} cy={y+planet.radius*0.25} rx={planet.radius*0.95} ry={planet.radius*0.13} fill={colorLerp(baseColor, 0.4)} opacity="0.18" />
+                    <ellipse cx={x} cy={y-planet.radius*0.18} rx={planet.radius*0.7} ry={planet.radius*0.09} fill={colorLerp(baseColor, 0.3)} opacity="0.13" />
+                    <ellipse cx={x} cy={y+planet.radius*0.05} rx={planet.radius*0.8} ry={planet.radius*0.07} fill={colorLerp(baseColor, 0.2)} opacity="0.09" />
                   </g>
                 );
               case 'default':
               default:
                 // 기본형: 입체 그라데이션, 표면 얼룩, 대기 글로우
+                const baseDefaultColor = planet.color && /^#[0-9a-fA-F]{6}$/.test(planet.color) ? planet.color : '#c97b3e';
                 return (
                   <g pointerEvents="none">
                     {/* 대기 글로우 */}
@@ -168,7 +206,7 @@ export default function PlanetNode({ planet, nodes, planetIdx, orbitRadius, star
                     <defs>
                       <radialGradient id={gradId} cx="60%" cy="38%" r="70%">
                         <stop offset="0%" stopColor="#fff" />
-                        <stop offset="60%" stopColor={planet.color} />
+                        <stop offset="60%" stopColor={baseDefaultColor} />
                         <stop offset="100%" stopColor="#1a2a4f" />
                       </radialGradient>
                     </defs>
