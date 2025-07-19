@@ -43,7 +43,8 @@ export const mindGraphActions = {
           radius: NODE_DEFAULTS.PLANET.radius,
           color: NODE_DEFAULTS.PLANET.color,
           children: [],
-          initialAngle: Math.random() * Math.PI * 2
+          initialAngle: Math.random() * Math.PI * 2,
+          planetDesign: NODE_DEFAULTS.PLANET.planetDesign,
         };
         return {
           ...state,
@@ -146,6 +147,16 @@ export const mindGraphActions = {
         nodes: {
           ...state.nodes,
           [id]: { ...state.nodes[id], content }
+        }
+      }));
+    },
+
+  setPlanetDesign: (id: NodeId, design: import('@/types/mind-graph').PlanetDesignType) =>
+    (set: SetState) => {
+      set((state: MindGraphState) => ({
+        nodes: {
+          ...state.nodes,
+          [id]: { ...state.nodes[id], planetDesign: design }
         }
       }));
     },

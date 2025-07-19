@@ -79,6 +79,7 @@ export default function OrbitNode({
         onClick={onClick}
         onContextMenu={onContextMenu ? (e) => onContextMenu(x, y, e) : undefined}
         onMouseDown={e => {
+          if (e.button !== 0) return; // 좌클릭만 드래그
           setDragging(true);
           startPos.current = { x: e.clientX, y: e.clientY };
         }}

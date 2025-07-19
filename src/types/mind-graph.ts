@@ -1,4 +1,5 @@
 export type NodeType = "star" | "planet" | "satellite";
+export type PlanetDesignType = "default" | "earth" | "ringed";
 export type NodeId = number;
 
 export interface MindNode {
@@ -14,6 +15,7 @@ export interface MindNode {
   orbitSpeed?: number;
   initialAngle?: number;
   content?: string;
+  planetDesign?: PlanetDesignType; // planet만 사용
 }
 
 export interface MindGraphState {
@@ -29,4 +31,5 @@ export interface MindGraphState {
   setNodeColor: (id: NodeId, color: string) => void;
   setNodeRadius: (id: NodeId, radius: number) => void;
   setNodeContent: (id: NodeId, content: string) => void;
+  setPlanetDesign: (id: NodeId, design: PlanetDesignType) => void;
 }

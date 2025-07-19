@@ -14,10 +14,11 @@ export default function PopupUI() {
     setNodeColor,
     setNodeRadius,
     selectNode,
+    setPlanetDesign,
   } = useMindGraphStore();
   const { openNameInput } = useNameInputStore();
 
-  const [subPopup, setSubPopup] = useState<null | "color" | "size">(null);
+  const [subPopup, setSubPopup] = useState<null | "color" | "size" | "design">(null);
   const [color, setColor] = useState("#000");
   const [radius, setRadius] = useState<number | string>(0);
 
@@ -140,6 +141,16 @@ export default function PopupUI() {
             color: "#2ad", fontWeight: 700, fontSize: 15, cursor: "pointer",
           }}
         >행성 추가</button>
+      )}
+      {node.type === "planet" && (
+        <button
+          onClick={() => setSubPopup("design")}
+          style={{
+            border: "none", borderRadius: 8,
+            padding: "8px 16px", background: "#333",
+            color: "#f7c873", fontWeight: 700, fontSize: 15, cursor: "pointer",
+          }}
+        >행성 디자인 변경</button>
       )}
       {node.type === "planet" && (
         <button
@@ -268,6 +279,66 @@ export default function PopupUI() {
                 setRadius(node.radius);
                 setSubPopup(null);
               }}
+              style={{
+                background: "none", border: "1px solid #444", color: "#bbb",
+                borderRadius: 6, padding: "2px 13px", cursor: "pointer"
+              }}
+            >취소</button>
+          </div>
+        </>
+      )}
+      {subPopup === "design" && (
+        <>
+          <div style={{ marginBottom: 5 }}>행성 디자인 선택</div>
+          <div style={{ display: "flex", gap: 16 }}>
+            {/* 기본형 */}
+            <button
+              onClick={() => {
+                setPlanetDesign(node.id, "default");
+                setSubPopup(null);
+              }}
+              style={{ background: "none", border: node.planetDesign === "default" ? "2px solid #2ad" : "1px solid #444", borderRadius: 8, padding: 6, cursor: "pointer" }}
+            >
+              <svg width="40" height="40">
+                <circle cx="20" cy="20" r="15" fill={node.color} stroke="#fff" strokeWidth="4" />
+              </svg>
+              <div style={{ fontSize: 13, color: "#fff", marginTop: 2 }}>기본형</div>
+            </button>
+            {/* 지구형 */}
+            <button
+              onClick={() => {
+                setPlanetDesign(node.id, "earth");
+                setSubPopup(null);
+              }}
+              style={{ background: "none", border: node.planetDesign === "earth" ? "2px solid #2ad" : "1px solid #444", borderRadius: 8, padding: 6, cursor: "pointer" }}
+            >
+              <svg width="40" height="40">
+                <circle cx="20" cy="20" r="15" fill="#3af" stroke="#1e7" strokeWidth="7" />
+                <ellipse cx="25" cy="15" rx="8" ry="3" fill="#1e7" opacity="0.7" />
+                <ellipse cx="10" cy="25" rx="5" ry="2" fill="#fff" opacity="0.3" />
+              </svg>
+              <div style={{ fontSize: 13, color: "#fff", marginTop: 2 }}>지구형</div>
+            </button>
+            {/* 고리형 */}
+            <button
+              onClick={() => {
+                setPlanetDesign(node.id, "ringed");
+                setSubPopup(null);
+              }}
+              style={{ background: "none", border: node.planetDesign === "ringed" ? "2px solid #2ad" : "1px solid #444", borderRadius: 8, padding: 6, cursor: "pointer" }}
+            >
+              <svg width="40" height="40">
+                <ellipse cx="20" cy="20" rx="20" ry="7" fill="none" stroke="#e6c07b" strokeWidth="5" opacity="0.7" />
+                <circle cx="20" cy="20" r="15" fill="#e6c07b" stroke="#b88f4a" strokeWidth="4" />
+                <ellipse cx="20" cy="28" rx="13" ry="3" fill="#fff2" />
+                <ellipse cx="20" cy="14" rx="10" ry="2" fill="#fff3" />
+              </svg>
+              <div style={{ fontSize: 13, color: "#fff", marginTop: 2 }}>고리형</div>
+            </button>
+          </div>
+          <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+            <button
+              onClick={() => setSubPopup(null)}
               style={{
                 background: "none", border: "1px solid #444", color: "#bbb",
                 borderRadius: 6, padding: "2px 13px", cursor: "pointer"
