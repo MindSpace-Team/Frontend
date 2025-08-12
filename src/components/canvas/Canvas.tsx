@@ -2,6 +2,7 @@
 import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { useBackgroundStore } from "@/store/backgroundStore";
 import Image from "next/image";
+import { ViewBoxContext } from "@/contexts/ViewBoxContext";
 
 const INIT_W = 1920;
 const INIT_H = 1080;
@@ -194,7 +195,9 @@ const Canvas = forwardRef<CanvasHandle, CanvasProps>(function Canvas({ children,
         onContextMenu={onCanvasContextMenu}
         tabIndex={0}
       >
-        {children.props.children}
+        <ViewBoxContext.Provider value={viewBox}>
+          {children.props.children}
+        </ViewBoxContext.Provider>
       </svg>
 
       {/* 도움말 */}
