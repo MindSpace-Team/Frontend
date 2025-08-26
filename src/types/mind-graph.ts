@@ -18,9 +18,12 @@ export interface MindNode {
   planetDesign?: PlanetDesignType; // planet만 사용
 }
 
-export interface MindGraphState {
+export interface MindGraphData {
   nodes: { [id: number]: MindNode };
   rootIds: NodeId[];
+}
+
+export interface MindGraphState extends MindGraphData {
   selectedNodeId: NodeId | null;
   selectNode: (id: NodeId | null) => void;
   addStar: (x: number, y: number, name: string) => void;
@@ -32,4 +35,6 @@ export interface MindGraphState {
   setNodeRadius: (id: NodeId, radius: number) => void;
   setNodeContent: (id: NodeId, content: string) => void;
   setPlanetDesign: (id: NodeId, design: PlanetDesignType) => void;
+  fetchGraph: () => Promise<void>;
+  saveGraph: () => Promise<void>;
 }
