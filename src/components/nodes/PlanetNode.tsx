@@ -22,7 +22,6 @@ interface Props {
 export default function PlanetNode({ planet, nodes, planetIdx, orbitRadius, starX, starY, onFocusNode }: Props) {
   const setPopup = usePopupStore(s => s.setPopup);
   const pausedRootIds = usePopupStore(s => s.pausedRootIds);
-  const { selectNode: _selectNode } = useMindGraphStore();
 
   // colorLerp: hex 색상 보간 및 hue shift (ringed/earth 등에서 공통 사용)
   function colorLerp(hex: string, amt: number, hueShift: number = 0) {

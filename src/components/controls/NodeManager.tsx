@@ -23,7 +23,6 @@ export default function NodeManager() {
   const [menu, setMenu] = useState<MenuState>(null);
   const [showBottomMenu, setShowBottomMenu] = useState(false);
   const [isMenuVisible, setIsMenuVisible] = useState(true);
-  const { selectNode: _selectNode } = useMindGraphStore();
   const canvasRef = useRef<CanvasHandle>(null);
 
   // 중심 이동 및 줌 리셋 핸들러

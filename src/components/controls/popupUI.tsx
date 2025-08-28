@@ -8,8 +8,6 @@ export default function PopupUI() {
   const { popup, setPopup, pausedRootIds, togglePauseRoot } = usePopupStore();
   const {
     nodes,
-    addPlanet: _addPlanet,
-    addSatellite: _addSatellite,
     removeNode,
     setNodeColor,
     setNodeRadius,
