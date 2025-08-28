@@ -55,7 +55,7 @@ export default function Signup() {
         </div>
 
         <div className="w-full flex flex-col gap-4">
-          <a href="/oauth2/authorization/google" className="glitch-button text-lg tracking-wide w-full">
+          <a href={`${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/google`} className="glitch-button text-lg tracking-wide w-full">
             <span className="glitch-text" data-text="Google로 시작하기">Google로 시작하기</span>
           </a>
         </div>
