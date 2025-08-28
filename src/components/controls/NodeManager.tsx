@@ -23,7 +23,7 @@ export default function NodeManager() {
   const [menu, setMenu] = useState<MenuState>(null);
   const [showBottomMenu, setShowBottomMenu] = useState(false);
   const [isMenuVisible, setIsMenuVisible] = useState(true);
-  const { selectNode } = useMindGraphStore();
+  const { selectNode: _selectNode } = useMindGraphStore();
   const canvasRef = useRef<CanvasHandle>(null);
 
   // 중심 이동 및 줌 리셋 핸들러
@@ -41,13 +41,13 @@ export default function NodeManager() {
     setMenu({ x: e.clientX, y: e.clientY, target: "canvas", svgX: x, svgY: y });
   };
 
-  function handleMenuOption(label: string) {
+  function handleMenuOption(_label: string) {
     if (!menu) return;
     if (menu.target === "canvas") {
-      if (label === "별 추가") {
+      if (_label === "별 추가") {
         openNameInput({ type: "star", x: menu.svgX, y: menu.svgY });
         setMenu(null);
-      } else if (label === "배경 변경") {
+      } else if (_label === "배경 변경") {
         setShowBottomMenu(true);
         setMenu(null);
       } else {
