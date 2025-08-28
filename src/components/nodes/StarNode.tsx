@@ -17,7 +17,7 @@ interface Props {
 
 export default function StarNode({ star, nodes, onContextMenu, onFocusNode }: Props) {
   const setPopup = usePopupStore(s => s.setPopup);
-  const selectNode = useMindGraphStore(s => s.selectNode);
+  const { selectNode: _selectNode } = useMindGraphStore();
   const planetIds = star.children;
   let planetAccRadius = 0;
 

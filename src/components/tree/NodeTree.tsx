@@ -17,10 +17,6 @@ export default function NodeTree({ onMenuStateChange }: NodeTreeProps) {
 
   // 임시 로그인 상태 (나중에 실제 인증 상태로 교체)
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userInfo, setUserInfo] = useState({
-    name: '사용자',
-    email: 'user@example.com'
-  });
 
   // 메뉴 상태 변경을 부모 컴포넌트에 알림
   useEffect(() => {
@@ -196,10 +192,12 @@ export default function NodeTree({ onMenuStateChange }: NodeTreeProps) {
                     marginBottom: '15px'
                   }}>
                     <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '5px' }}>
-                      {userInfo.name}
+                      {/* {userInfo.name} */}
+                      사용자
                     </div>
                     <div style={{ fontSize: '12px', color: '#ccc' }}>
-                      {userInfo.email}
+                      {/* {userInfo.email} */}
+                      user@example.com
                     </div>
                   </div>
 

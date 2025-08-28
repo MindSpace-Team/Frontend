@@ -22,7 +22,7 @@ interface Props {
 export default function SatelliteNode({ satId, satIdx, nodes, centerX, centerY, onFocusNode }: Props) {
   const setPopup = usePopupStore(s => s.setPopup);
   const pausedRootIds = usePopupStore(s => s.pausedRootIds);
-  const selectNode = useMindGraphStore(s => s.selectNode);
+  const { selectNode: _selectNode } = useMindGraphStore();
   const satellite = nodes[satId];
   const isPaused = (nodeId: number) => pausedRootIds.has(findRootId(nodeId, nodes));
 

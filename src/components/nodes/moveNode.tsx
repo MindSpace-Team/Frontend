@@ -32,8 +32,8 @@ function colorLerp(hex: string, amt: number, hueShift: number = 0) {
   h = (h + hueShift / 360) % 1;
   if (h < 0) h += 1;
   // hsl -> rgb
-  let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-  let p = 2 * l - q;
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
   function h2rgb(p: number, q: number, t: number) {
     if (t < 0) t += 1;
     if (t > 1) t -= 1;
