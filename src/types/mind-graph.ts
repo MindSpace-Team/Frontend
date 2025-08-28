@@ -35,6 +35,4 @@ export interface MindGraphState extends MindGraphData {
   setNodeRadius: (id: NodeId, radius: number) => void;
   setNodeContent: (id: NodeId, content: string) => void;
   setPlanetDesign: (id: NodeId, design: PlanetDesignType) => void;
-  fetchGraph: () => Promise<void>;
-  saveGraph: () => Promise<void>;
 }
