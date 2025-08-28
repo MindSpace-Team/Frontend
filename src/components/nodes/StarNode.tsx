@@ -1,7 +1,6 @@
 import React from "react";
 import { MindNode } from "@/types/mind-graph";
 import { usePopupStore } from "@/store/popupStore";
-import { useMindGraphStore } from "@/store/mindGraphStore";
 import MoveNode from "./moveNode";
 import PlanetNode from "./PlanetNode";
 
