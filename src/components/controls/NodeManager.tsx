@@ -1,6 +1,6 @@
 "use client";
-import React, { useState } from "react";
-import Canvas from "@/components/canvas/Canvas";
+import React, { useState, useRef } from "react";
+import Canvas, { CanvasHandle } from "@/components/canvas/Canvas";
 import Nodes from "@/components/nodes/nodes";
 import ContextMenu from "@/components/common/ContextMenu";
 import { useMindGraphStore } from "@/store/mindGraphStore";
@@ -24,6 +24,12 @@ export default function NodeManager() {
   const [showBottomMenu, setShowBottomMenu] = useState(false);
   const [isMenuVisible, setIsMenuVisible] = useState(true);
   const { selectNode } = useMindGraphStore();
+  const canvasRef = useRef<CanvasHandle>(null);
+
+  // 중심 이동 및 줌 리셋 핸들러
+  const handleFocusNode = (x: number, y: number) => {
+    canvasRef.current?.focusOn(x, y);
+  };
 
   const handleCanvasContextMenu = (e: React.MouseEvent<SVGSVGElement>) => {
     e.preventDefault();
@@ -58,7 +64,7 @@ export default function NodeManager() {
     <>
       <NameInputModal />
       <NodeTree onMenuStateChange={setIsMenuVisible} />
-      <Canvas onCanvasContextMenu={handleCanvasContextMenu}>
+      <Canvas ref={canvasRef} onCanvasContextMenu={handleCanvasContextMenu}>
         <svg
           width={canvasWidth}
           height="100vh"
@@ -71,7 +77,7 @@ export default function NodeManager() {
             transition: "width 0.3s ease-in-out, margin-left 0.3s ease-in-out"
           }}
         >
-          <Nodes nodes={nodes} />
+          <Nodes nodes={nodes} onFocusNode={handleFocusNode} />
           <PopupUI />
         </svg>
       </Canvas>

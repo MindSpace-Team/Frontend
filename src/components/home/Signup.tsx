@@ -48,6 +48,18 @@ export default function Signup() {
           </button>
         </form>
 
+        <div className="w-full flex items-center gap-2">
+          <div className="h-px w-full bg-white/20"></div>
+          <span className="text-white/60">OR</span>
+          <div className="h-px w-full bg-white/20"></div>
+        </div>
+
+        <div className="w-full flex flex-col gap-4">
+          <a href={`${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/google`} className="glitch-button text-lg tracking-wide w-full">
+            <span className="glitch-text" data-text="Google로 시작하기">Google로 시작하기</span>
+          </a>
+        </div>
+
         <button
           onClick={() => router.push("/")}
           className="glitch-button text-lg tracking-wide w-full"

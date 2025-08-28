@@ -16,9 +16,10 @@ interface Props {
   nodes: { [id: number]: MindNode };
   centerX: number;
   centerY: number;
+  onFocusNode?: (x: number, y: number) => void;
 }
 
-export default function SatelliteNode({ satId, satIdx, nodes, centerX, centerY }: Props) {
+export default function SatelliteNode({ satId, satIdx, nodes, centerX, centerY, onFocusNode }: Props) {
   const setPopup = usePopupStore(s => s.setPopup);
   const pausedRootIds = usePopupStore(s => s.pausedRootIds);
   const selectNode = useMindGraphStore(s => s.selectNode);
@@ -65,6 +66,7 @@ export default function SatelliteNode({ satId, satIdx, nodes, centerX, centerY }
         e.stopPropagation();
         setPopup({ id: satId, x, y });
       }}
+      onFocusNode={onFocusNode}
     />
   );
 }

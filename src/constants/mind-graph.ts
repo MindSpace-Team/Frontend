@@ -6,6 +6,7 @@ export const NODE_DEFAULTS = {
     PLANET: {
       radius: 40,
       color: "#3af",
+      planetDesign: 'default',
     },
     SATELLITE: {
       radius: 12,

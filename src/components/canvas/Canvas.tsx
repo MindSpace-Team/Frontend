@@ -1,19 +1,25 @@
 "use client";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { useBackgroundStore } from "@/store/backgroundStore";
 import Image from "next/image";
+import { ViewBoxContext } from "@/contexts/ViewBoxContext";
 
 const INIT_W = 1920;
 const INIT_H = 1080;
 const MIN_SCALE = 0.001;
 const MAX_SCALE = 50;
+const ANIMATION_DURATION = 300; // ms
 
 type CanvasProps = {
   children: React.ReactElement<React.SVGProps<SVGSVGElement>>;
   onCanvasContextMenu?: (e: React.MouseEvent<SVGSVGElement>) => void;
 };
 
-export default function Canvas({ children, onCanvasContextMenu }: CanvasProps) {
+export type CanvasHandle = {
+  focusOn: (x: number, y: number) => void;
+};
+
+const Canvas = forwardRef<CanvasHandle, CanvasProps>(function Canvas({ children, onCanvasContextMenu }, ref) {
   const svgRef = useRef<SVGSVGElement>(null);
   const [viewBox, setViewBox] = useState({ x: 0, y: 0, w: INIT_W, h: INIT_H });
   const [dragging, setDragging] = useState(false);
@@ -21,6 +27,41 @@ export default function Canvas({ children, onCanvasContextMenu }: CanvasProps) {
   const last = useRef({ x: 0, y: 0, viewBoxX: 0, viewBoxY: 0 });
   const [size, setSize] = useState({ width: INIT_W, height: INIT_H });
   const currentBackground = useBackgroundStore(s => s.currentBackground);
+  const animationRef = useRef<number | null>(null);
+
+  useImperativeHandle(ref, () => ({
+    focusOn: (x: number, y: number) => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+      const start = performance.now();
+      const from = { ...viewBox };
+      const to = {
+        x: x - INIT_W / 2,
+        y: y - INIT_H / 2,
+        w: INIT_W,
+        h: INIT_H,
+      };
+      function animate(now: number) {
+        const t = Math.min(1, (now - start) / ANIMATION_DURATION);
+        // easeInOutQuad
+        const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+        setViewBox({
+          x: from.x + (to.x - from.x) * ease,
+          y: from.y + (to.y - from.y) * ease,
+          w: from.w + (to.w - from.w) * ease,
+          h: from.h + (to.h - from.h) * ease,
+        });
+        if (t < 1) {
+          animationRef.current = requestAnimationFrame(animate);
+        } else {
+          setViewBox(to);
+          animationRef.current = null;
+        }
+      }
+      animationRef.current = requestAnimationFrame(animate);
+    },
+  }), [viewBox]);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -154,7 +195,9 @@ export default function Canvas({ children, onCanvasContextMenu }: CanvasProps) {
         onContextMenu={onCanvasContextMenu}
         tabIndex={0}
       >
-        {children.props.children}
+        <ViewBoxContext.Provider value={viewBox}>
+          {children.props.children}
+        </ViewBoxContext.Provider>
       </svg>
 
       {/* 도움말 */}
@@ -173,4 +216,6 @@ export default function Canvas({ children, onCanvasContextMenu }: CanvasProps) {
       </span>
     </div>
   );
-}
+});
+
+export default Canvas;

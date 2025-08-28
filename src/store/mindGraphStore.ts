@@ -15,4 +15,5 @@ export const useMindGraphStore = create<MindGraphState>((set) => ({
   setNodeColor: (id: number, color: string) => mindGraphActions.setNodeColor(id, color)(set),
   setNodeRadius: (id: number, radius: number) => mindGraphActions.setNodeRadius(id, radius)(set),
   setNodeContent: (id: number, content: string) => mindGraphActions.setNodeContent(id, content)(set),
+  setPlanetDesign: (id: number, design: import('@/types/mind-graph').PlanetDesignType) => mindGraphActions.setPlanetDesign(id, design)(set),
 }));
