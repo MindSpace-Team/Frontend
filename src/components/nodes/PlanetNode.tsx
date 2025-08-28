@@ -3,7 +3,6 @@ import { MindNode } from "@/types/mind-graph";
 import OrbitNode from "@/components/controls/Orbit";
 import SatelliteNode from "./SatelliteNode";
 import { usePopupStore } from "@/store/popupStore";
-import { useMindGraphStore } from "@/store/mindGraphStore";
 import { findRootId } from "./utils";
 
 const planetBaseSpeed = 0.3;
@@ -85,7 +84,6 @@ export default function PlanetNode({ planet, nodes, planetIdx, orbitRadius, star
           {/* 행성 디자인 분기 - 입체감, 그라데이션, 표면 질감, 대기 효과 추가 */}
           {(() => {
             const gradId = `planet-grad-${planet.id}`;
-            const atmId = `planet-atm-${planet.id}`;
             switch (planet.planetDesign) {
               case 'earth': {
                 // 지구형: 북반구(가로로 길게), 남반구(더 아래), 남극 구름 추가

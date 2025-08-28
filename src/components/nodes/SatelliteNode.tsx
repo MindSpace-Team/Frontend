@@ -2,7 +2,6 @@ import React from "react";
 import { MindNode } from "@/types/mind-graph";
 import OrbitNode from "@/components/controls/Orbit";
 import { usePopupStore } from "@/store/popupStore";
-import { useMindGraphStore } from "@/store/mindGraphStore";
 import { findRootId } from "./utils";
 
 const satBaseSpeed = 0.7;
