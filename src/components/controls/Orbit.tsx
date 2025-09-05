@@ -49,8 +49,8 @@ export default function OrbitNode({
     return () => { running = false; };
   }, [speed, paused]);
 
-  const x = centerX + radius * Math.cos(angle);
-  const y = centerY + radius * Math.sin(angle);
+  const x = centerX + radius * 1.5 * Math.cos(angle);
+  const y = centerY + radius * 0.75 * Math.sin(angle);
   xyRef.current = { x, y };
 
   React.useEffect(() => {

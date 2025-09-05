@@ -47,16 +47,27 @@ export default function StarNode({ star, nodes, onContextMenu, onFocusNode }: Pr
         }
 
         return (
-          <PlanetNode
-            key={planet.id}
-            planet={planet}
-            nodes={nodes}
-            planetIdx={idx}
-            orbitRadius={planetAccRadius}
-            starX={star.x}
-            starY={star.y}
-            onFocusNode={onFocusNode}
-          />
+          <React.Fragment key={planet.id}>
+            <ellipse
+              cx={star.x}
+              cy={star.y}
+              rx={planetAccRadius * 1.5}
+              ry={planetAccRadius * 0.75}
+              fill="none"
+              stroke="rgba(255, 255, 255, 0.4)"
+              strokeWidth="1"
+            />
+            <PlanetNode
+              key={planet.id}
+              planet={planet}
+              nodes={nodes}
+              planetIdx={idx}
+              orbitRadius={planetAccRadius}
+              starX={star.x}
+              starY={star.y}
+              onFocusNode={onFocusNode}
+            />
+          </React.Fragment>
         );
       })}
     </>
