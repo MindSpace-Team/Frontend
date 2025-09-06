@@ -59,7 +59,7 @@ export default function PlanetNode({ planet, nodes, planetIdx, orbitRadius, star
   }
 
   const isPaused = (nodeId: number) => pausedRootIds.has(findRootId(nodeId, nodes));
-  const speed = planetBaseSpeed * Math.pow(planetDecay, planetIdx);
+  const speed = planet.orbitSpeed ?? planetBaseSpeed * Math.pow(planetDecay, planetIdx);
 
   return (
     <OrbitNode

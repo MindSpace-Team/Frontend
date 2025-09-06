@@ -46,7 +46,7 @@ export default function SatelliteNode({ satId, satIdx, nodes, centerX, centerY, 
     })();
   }
 
-  const speed = satBaseSpeed * Math.pow(satDecay, satIdx);
+  const speed = satellite.orbitSpeed ?? satBaseSpeed * Math.pow(satDecay, satIdx);
 
   return (
     <OrbitNode

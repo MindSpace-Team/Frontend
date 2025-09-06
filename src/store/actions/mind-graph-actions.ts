@@ -160,4 +160,14 @@ export const mindGraphActions = {
         }
       }));
     },
+
+  setNodeOrbitSpeed: (id: NodeId, orbitSpeed: number) =>
+    (set: SetState) => {
+      set((state: MindGraphState) => ({
+        nodes: {
+          ...state.nodes,
+          [id]: { ...state.nodes[id], orbitSpeed }
+        }
+      }));
+    },
 } as const;

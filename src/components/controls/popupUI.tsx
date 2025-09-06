@@ -13,12 +13,15 @@ export default function PopupUI() {
     setNodeRadius,
     selectNode,
     setPlanetDesign,
+    setNodeOrbitSpeed,
   } = useMindGraphStore();
   const { openNameInput } = useNameInputStore();
 
-  const [subPopup, setSubPopup] = useState<null | "color" | "size" | "design">(null);
+  const [subPopup, setSubPopup] = useState<null | "color" | "size" | "design" | "speed">(null);
   const [color, setColor] = useState("#000");
   const [radius, setRadius] = useState<number | string>(0);
+  const [orbitSpeed, setOrbitSpeed] = useState<number | string>(0);
+  const [validationMessage, setValidationMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!popup) return;
@@ -26,6 +29,7 @@ export default function PopupUI() {
     if (!node) return;
     setColor(node.color);
     setRadius(node.radius);
+    setOrbitSpeed(node.orbitSpeed ?? 0.3);
     setSubPopup(null);
   }, [popup, nodes]);
 
@@ -115,6 +119,16 @@ export default function PopupUI() {
           color: "#ffe37d", fontWeight: 700, fontSize: 15, cursor: "pointer",
         }}
       >사이즈 변경</button>
+      {(node.type === "planet" || node.type === "satellite") && (
+        <button
+        onClick={() => setSubPopup("speed")}
+        style={{
+          border: "none", borderRadius: 8,
+          padding: "8px 16px", background: "#333",
+          color: "#7af", fontWeight: 700, fontSize: 15, cursor: "pointer",
+        }}
+      >공전 속도 조절</button>
+      )}
       <button
         onClick={() => {
           togglePauseRoot(node.id, nodes);
@@ -285,6 +299,54 @@ export default function PopupUI() {
           </div>
         </>
       )}
+      {subPopup === "speed" && (
+        <>
+          <div style={{ marginBottom: 5 }}>공전 속도 조절</div>
+          <input
+            type="number"
+            min={0}
+            max={1}
+            step={0.01}
+            value={orbitSpeed}
+            onChange={e => {
+              setOrbitSpeed(e.target.value === "" ? "" : Number(e.target.value));
+            }}
+            style={{
+              width: 64, border: "1px solid #444", background: "none",
+              color: "#fff", borderRadius: 6, padding: "5px 7px", textAlign: "center"
+            }}
+          />
+          <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+            <button
+              onClick={() => {
+                if (typeof orbitSpeed === "number" && orbitSpeed >= 0 && orbitSpeed <= 1) {
+                  setNodeOrbitSpeed(node.id, orbitSpeed);
+                  setSubPopup(null);
+                } else {
+                  setValidationMessage("숫자는 0에서 1 사이로 입력해주세요.");
+                  setTimeout(() => {
+                    setValidationMessage(null);
+                  }, 3000);
+                }
+              }}
+              style={{
+                background: "#2ad", border: "none", color: "#fff",
+                borderRadius: 6, padding: "2px 13px", cursor: "pointer"
+              }}
+            >적용</button>
+            <button
+              onClick={() => {
+                setOrbitSpeed(node.orbitSpeed ?? 0.3);
+                setSubPopup(null);
+              }}
+              style={{
+                background: "none", border: "1px solid #444", color: "#bbb",
+                borderRadius: 6, padding: "2px 13px", cursor: "pointer"
+              }}
+            >취소</button>
+          </div>
+        </>
+      )}
       {subPopup === "design" && (
         <>
           <div style={{ marginBottom: 5 }}>행성 디자인 선택</div>
@@ -352,6 +414,23 @@ export default function PopupUI() {
     <>
       {ReactDOM.createPortal(menuContent, document.body)}
       {subPopup && ReactDOM.createPortal(subPopupContent, document.body)}
+      {validationMessage && ReactDOM.createPortal(
+        <div style={{
+          position: 'fixed',
+          bottom: '80px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: 'rgba(255, 50, 50, 0.8)',
+          color: 'white',
+          padding: '10px 20px',
+          borderRadius: '8px',
+          zIndex: 10001,
+          boxShadow: '0 2px 10px rgba(0,0,0,0.5)'
+        }}>
+          {validationMessage}
+        </div>,
+        document.body
+      )}
     </>
   );
 }
